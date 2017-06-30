@@ -1,0 +1,17 @@
+*.class
+.gradle
+/build/
+/bin/
+/.settings/
+.project
+.classpath
+.idea
+spot-service.iml
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Serverless directories
+.serverless
