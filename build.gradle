@@ -8,12 +8,17 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+
+    compile fileTree(dir: 'libs', include: '*.jar') //include local jar dependencies
+
     compile (
         'com.amazonaws:aws-lambda-java-core:1.1.0',
         'com.amazonaws:aws-lambda-java-log4j:1.0.0',
         'com.fasterxml.jackson.core:jackson-core:2.8.5',
         'com.fasterxml.jackson.core:jackson-databind:2.8.5',
-        'com.fasterxml.jackson.core:jackson-annotations:2.8.5'
+        'com.fasterxml.jackson.core:jackson-annotations:2.8.5',
+        'com.amazonaws:aws-java-sdk-dynamodb:1.11.156',
+        'org.apache.commons:commons-lang3:3.6'
     )
 }
 
@@ -27,7 +32,7 @@ task buildZip(type: Zip) {
     // Link: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Zip.html
 
     // set the base name of the zip file
-    baseName = "get_spots_service"
+    baseName = "spots_service"
     from compileJava
     from processResources
     into('lib') {
