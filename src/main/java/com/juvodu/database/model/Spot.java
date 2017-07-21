@@ -1,10 +1,15 @@
-package com.juvodu.model;
+package com.juvodu.database.model;
+
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 /**
- * Created by Juvodu on 01.07.17.
+ * Model representing the Spot table
  */
+@DynamoDBTable(tableName = "spot")
 public class Spot {
 
+    @DynamoDBHashKey(attributeName = "id")
     private String id;
 
     private String name;

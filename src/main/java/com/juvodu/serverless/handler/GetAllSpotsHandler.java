@@ -2,15 +2,19 @@ package com.juvodu.serverless.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.juvodu.model.Spot;
-import com.juvodu.serverless.ApiGatewayResponse;
+import com.juvodu.database.model.Spot;
+import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.service.SpotService;
 import org.apache.log4j.Logger;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Handler which retrieves all Spots.
+ *
+ * @author Juvodu
+ */
 public class GetAllSpotsHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private static final Logger LOG = Logger.getLogger(GetAllSpotsHandler.class);

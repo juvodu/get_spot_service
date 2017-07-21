@@ -18,6 +18,13 @@ functions:
           path: spots
           method: get
           cors: true
+  getSpot:
+      handler: com.juvodu.serverless.handler.GetSpotHandler
+      events:
+        - http:
+            path: spot
+            method: get
+            cors: true
   createSpot:
     handler: com.juvodu.serverless.handler.CreateSpotHandler
     events:

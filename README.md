@@ -1,1 +1,1 @@
-# Get Spot Service
+# Spot Service

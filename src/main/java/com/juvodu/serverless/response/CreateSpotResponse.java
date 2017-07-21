@@ -1,7 +1,9 @@
-package com.juvodu.serverless;
+package com.juvodu.serverless.response;
 
 /**
- * Created by Juvodu on 01.07.17.
+ * Response model for spot creation
+ *
+ * @author Juvodu
  */
 public class CreateSpotResponse {
 

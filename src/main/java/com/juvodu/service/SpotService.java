@@ -9,7 +9,8 @@ import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
-import com.juvodu.model.Spot;
+import com.juvodu.database.ItemMapper;
+import com.juvodu.database.model.Spot;
 import com.juvodu.util.Constants;
 
 import java.util.ArrayList;
@@ -18,7 +19,9 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by Juvodu on 01.07.17.
+ * Service for Spot retrieval and processing.
+ *
+ * @author Juvodu
  */
 public class SpotService {
 
@@ -34,6 +37,12 @@ public class SpotService {
         table = dynamoDB.getTable(Constants.DB_NAME);
     }
 
+    public Spot getSpotById(String id){
+
+        Item item = table.getItem("id", id);
+        return ItemMapper.createSpot(item);
+    }
+
     public List<Spot> findAllSpots(){
 
         ScanRequest scanRequest = new ScanRequest().withTableName(Constants.DB_NAME);
@@ -41,11 +50,11 @@ public class SpotService {
 
         List<Spot> spots = new ArrayList<>();
         for (Map<String, AttributeValue> item : scanResult.getItems()) {
-            Spot rating = new Spot();
-            rating.setId(item.get(Constants.DB_FIELD_ID).getS());
-            rating.setName(item.get(Constants.DB_FIELD_NAME).getS());
-            rating.setDescription(item.get(Constants.DB_FIELD_DESC).getS());
-            spots.add(rating);
+            Spot spot = new Spot();
+            spot.setId(item.get(Constants.DB_FIELD_ID).getS());
+            spot.setName(item.get(Constants.DB_FIELD_NAME).getS());
+            spot.setDescription(item.get(Constants.DB_FIELD_DESC).getS());
+            spots.add(spot);
         }
         return spots;
     }

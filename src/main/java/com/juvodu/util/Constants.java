@@ -1,7 +1,9 @@
 package com.juvodu.util;
 
 /**
- * Created by Juvodu on 01.07.17.
+ * Generic constants are stored here
+ *
+ * @author Juvodu
  */
 public class Constants {
 

@@ -1,7 +1,9 @@
 package com.juvodu.serverless.handler;
 
 /**
- * Created by Juvodu on 01.07.17.
+ * Handler for updating an existing Spot.
+ *
+ * @author Juvodu
  */
 public class UpdateSpotHandler {
 }
