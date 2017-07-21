@@ -1,11 +1,11 @@
 package com.juvodu.serverless.response;
 
 /**
- * Response model for spot creation
+ * Response for crud operations on the spot model
  *
  * @author Juvodu
  */
-public class CreateSpotResponse {
+public class CrudSpotResponse {
 
     private String id;
 

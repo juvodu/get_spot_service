@@ -5,11 +5,10 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.juvodu.database.model.Spot;
 import com.juvodu.serverless.response.ApiGatewayResponse;
-import com.juvodu.serverless.response.CreateSpotResponse;
+import com.juvodu.serverless.response.CrudSpotResponse;
 import com.juvodu.service.SpotService;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -36,16 +35,20 @@ private static final ObjectMapper objectMapper = new ObjectMapper();
         int statusCode = 200;
 
         try {
+
+            // parse post and create spot
             Spot spot = objectMapper.readValue(body.toString(), Spot.class);
             SpotService spotService = new SpotService();
             id = spotService.save(spot);
-        }catch(IOException e){
+
+        }catch(Exception e){
+
             statusCode = 500;
-            message = "Error: Incorrect spot data provided.";
+            message = "Error: Could not create spot due to: " + e.getMessage();
             e.printStackTrace();
         }
 
-        CreateSpotResponse createSpotResponse = new CreateSpotResponse();
+        CrudSpotResponse createSpotResponse = new CrudSpotResponse();
         createSpotResponse.setId(id);
         createSpotResponse.setMessage(message);
 

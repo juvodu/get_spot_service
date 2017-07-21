@@ -71,4 +71,9 @@ public class SpotService {
 
         return id;
     }
+
+    public void delete(String id){
+
+        table.deleteItem("id", id);
+    }
 }

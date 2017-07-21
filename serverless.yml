@@ -29,7 +29,14 @@ functions:
     handler: com.juvodu.serverless.handler.CreateSpotHandler
     events:
       - http:
-          path: spot
+          path: spot/create
+          method: post
+          cors: true
+  deleteSpot:
+    handler: com.juvodu.serverless.handler.DeleteSpotHandler
+    events:
+      - http:
+          path: spot/delete
           method: post
           cors: true
 

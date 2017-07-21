@@ -2,13 +2,12 @@ package com.juvodu.serverless.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.juvodu.database.model.Spot;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
+import com.juvodu.serverless.response.CrudSpotResponse;
 import com.juvodu.service.SpotService;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -26,26 +25,34 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
         String queryStringParameters = input.get("queryStringParameters").toString();
         LOG.info("Query String parameters: " + queryStringParameters);
 
-        Spot spot = null;
+        Object result = null;
+        String id = null;
         int statusCode = 200;
 
         try {
 
             // get parameters
             Map<String, String> queryStringParametersMap = ParameterParser.getParameters(queryStringParameters);
-            String id = queryStringParametersMap.get("id");
+            id = queryStringParametersMap.get("id");
             LOG.info("Get spot by id: " + id);
 
+            //get spot
             SpotService spotService = new SpotService();
-            spot = spotService.getSpotById(id);
-        } catch (IOException e) {
+            result = spotService.getSpotById(id);
+        } catch (Exception e) {
+
+            CrudSpotResponse crudSpotResponse = new CrudSpotResponse();
+            crudSpotResponse.setId(id);
+            crudSpotResponse.setMessage("Could not get spot with id " + id + ". Spot does not exist.");
+            result = crudSpotResponse;
+
             statusCode = 500;
             e.printStackTrace();
         }
 
         return ApiGatewayResponse.builder()
                 .setStatusCode(statusCode)
-                .setObjectBody(spot)
+                .setObjectBody(result)
                 .build();
     }
 }
