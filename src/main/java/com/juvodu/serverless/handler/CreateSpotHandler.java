@@ -48,13 +48,9 @@ private static final ObjectMapper objectMapper = new ObjectMapper();
             e.printStackTrace();
         }
 
-        CrudSpotResponse createSpotResponse = new CrudSpotResponse();
-        createSpotResponse.setId(id);
-        createSpotResponse.setMessage(message);
-
         return ApiGatewayResponse.builder()
         .setStatusCode(statusCode)
-        .setObjectBody(createSpotResponse)
+        .setObjectBody(new CrudSpotResponse(id, message))
         .build();
     }
 }

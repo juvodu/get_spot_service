@@ -11,6 +11,12 @@ public class CrudSpotResponse {
 
     private String message;
 
+    public CrudSpotResponse(String id, String message){
+
+        this.id = id;
+        this.message = message;
+    }
+
     public String getId() {
         return id;
     }

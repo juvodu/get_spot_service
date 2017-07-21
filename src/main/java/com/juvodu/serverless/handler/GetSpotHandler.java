@@ -25,7 +25,7 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
         String queryStringParameters = input.get("queryStringParameters").toString();
         LOG.info("Query String parameters: " + queryStringParameters);
 
-        Object result = null;
+        Object result;
         String id = null;
         int statusCode = 200;
 
@@ -39,14 +39,11 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
             //get spot
             SpotService spotService = new SpotService();
             result = spotService.getSpotById(id);
+
         } catch (Exception e) {
 
-            CrudSpotResponse crudSpotResponse = new CrudSpotResponse();
-            crudSpotResponse.setId(id);
-            crudSpotResponse.setMessage("Could not get spot with id " + id + ". Spot does not exist.");
-            result = crudSpotResponse;
-
             statusCode = 500;
+            result = new CrudSpotResponse(id, "Could not get spot with id " + id + ". Spot does not exist.");
             e.printStackTrace();
         }
 

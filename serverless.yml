@@ -39,6 +39,13 @@ functions:
           path: spot/delete
           method: post
           cors: true
+  updateSpot:
+    handler: com.juvodu.serverless.handler.UpdateSpotHandler
+    events:
+      - http:
+          path: spot/update
+          method: post
+          cors: true
 
 # The "Resources" your "Functions" use.  Raw AWS CloudFormation goes in here.
 resources:

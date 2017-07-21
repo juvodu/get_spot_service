@@ -26,7 +26,7 @@ public class DeleteSpotHandler implements RequestHandler<Map<String, Object>, Ap
 
         LOG.info("Delete Spot:" + input);
 
-        //API gateway puts json POST data to a body object
+        //API gateway puts json POST data into a body object
         Object body = input.get("body");
 
         int statusCode = 200;
@@ -51,13 +51,9 @@ public class DeleteSpotHandler implements RequestHandler<Map<String, Object>, Ap
             e.printStackTrace();
         }
 
-        CrudSpotResponse crudSpotResponse = new CrudSpotResponse();
-        crudSpotResponse.setId(id);
-        crudSpotResponse.setMessage(message);
-
         return ApiGatewayResponse.builder()
                 .setStatusCode(statusCode)
-                .setObjectBody(crudSpotResponse)
+                .setObjectBody(new CrudSpotResponse(id, message))
                 .build();
     }
 }

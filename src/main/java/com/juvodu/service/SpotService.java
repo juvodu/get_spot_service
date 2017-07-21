@@ -62,14 +62,19 @@ public class SpotService {
     public String save(Spot spot){
 
         String id = UUID.randomUUID().toString();
+        spot.setId(id);
+        return update(spot);
+    }
+
+    public String update(Spot spot){
 
         Item item = new Item();
-        item.withString(Constants.DB_FIELD_ID, id);
+        item.withString(Constants.DB_FIELD_ID, spot.getId());
         item.withString(Constants.DB_FIELD_NAME, spot.getName());
         item.withString(Constants.DB_FIELD_DESC, spot.getDescription());
         table.putItem(item);
 
-        return id;
+        return spot.getId();
     }
 
     public void delete(String id){
