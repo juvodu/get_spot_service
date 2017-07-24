@@ -59,6 +59,8 @@ resources:
             AttributeType: S
           - AttributeName: continent
             AttributeType: S
+          - AttributeName: country
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
@@ -66,10 +68,12 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         GlobalSecondaryIndexes:
-          - IndexName: continent-index
+          - IndexName: continent-country-index
             KeySchema:
               - AttributeName: continent
                 KeyType: HASH
+              - AttributeName: country
+                KeyType: RANGE
             Projection:
                 ProjectionType: ALL
             ProvisionedThroughput:

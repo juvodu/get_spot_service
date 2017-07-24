@@ -7,6 +7,5 @@ package com.juvodu.util;
  */
 public class Constants {
 
-    public static final String DB_NAME = "spot";
-    public static final String DB_NAME_TEST = "spot_test";
+    public static final String CONTINENT_COUNTRY_INDEX = "continent-country-index";
 }

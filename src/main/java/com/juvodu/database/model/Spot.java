@@ -1,7 +1,10 @@
 package com.juvodu.database.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import com.juvodu.database.converter.ContinentConverter;
+import com.javadocmd.simplelatlng.LatLng;
+import com.juvodu.database.converter.ContinentTypeConverter;
+import com.juvodu.database.converter.CountryTypeConverter;
+import com.juvodu.database.converter.LatLngTypeConverter;
 
 /**
  * Model representing the Spot table
@@ -20,8 +23,16 @@ public class Spot {
     private String description;
 
     @DynamoDBAttribute
-    @DynamoDBTypeConverted(converter = ContinentConverter.class)
+    @DynamoDBTypeConverted(converter = ContinentTypeConverter.class)
     private Continent continent;
+
+    @DynamoDBAttribute
+    @DynamoDBTypeConverted(converter = CountryTypeConverter.class)
+    private Country country;
+
+    @DynamoDBTypeConverted(converter = LatLngTypeConverter.class)
+    @DynamoDBAttribute(attributeName = "position")
+    private LatLng position;
 
     public String getId() {
         return id;
@@ -49,5 +60,21 @@ public class Spot {
 
     public void setContinent(Continent continent) {
         this.continent = continent;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+    public LatLng getPosition() {
+        return position;
+    }
+
+    public void setPosition(LatLng position) {
+        this.position = position;
     }
 }

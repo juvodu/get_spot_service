@@ -8,7 +8,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.juvodu.database.model.Continent;
+import com.juvodu.database.model.Country;
 import com.juvodu.database.model.Spot;
+import com.juvodu.util.Constants;
 
 import java.util.HashMap;
 import java.util.List;
@@ -94,9 +96,12 @@ public class SpotService<T extends Spot> {
     }
 
     /**
+     * Find all spots for a given continent
      *
      * @param continent
-     * @return
+     *          used to filter spots
+     *
+     * @return list of spots in the continent
      */
     public List<T> findByContinent(Continent continent){
 
@@ -105,7 +110,32 @@ public class SpotService<T extends Spot> {
 
         DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
                 .withKeyConditionExpression("continent = :val1")
-                .withIndexName("continent-index")
+                .withIndexName(Constants.CONTINENT_COUNTRY_INDEX)
+                .withConsistentRead(false)
+                .withExpressionAttributeValues(eav);
+
+        return mapper.query(spotClass, queryExpression);
+    }
+
+    /**
+     * Find all spots for a given country
+     *
+     * @param continent
+     *              needs to be specified as it is the partition key of the continent-index
+     * @param country
+     *              the country to filter for, can be used as it is the range key of the continent-index
+     *
+     * @return list of spots filtered by the specified country
+     */
+    public List<T> findByCountry(Continent continent, Country country){
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS(continent.getCode()));
+        eav.put(":val2", new AttributeValue().withS(country.getCode()));
+
+        DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
+                .withKeyConditionExpression("continent = :val1 and country = :val2")
+                .withIndexName(Constants.CONTINENT_COUNTRY_INDEX)
                 .withConsistentRead(false)
                 .withExpressionAttributeValues(eav);
 

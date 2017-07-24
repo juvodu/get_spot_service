@@ -4,11 +4,11 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 import com.juvodu.database.model.Continent;
 
 /**
- * Custom continent converter for for non standard types to be used by the DynamoDB converter
+ * Custom continent converter, necessary for non standard types to be used by the DynamoDB converter
  *
  * @author Juvodu
  */
-public class ContinentConverter implements DynamoDBTypeConverter<String, Continent>{
+public class ContinentTypeConverter implements DynamoDBTypeConverter<String, Continent>{
 
     @Override
     public String convert(Continent continent) {
