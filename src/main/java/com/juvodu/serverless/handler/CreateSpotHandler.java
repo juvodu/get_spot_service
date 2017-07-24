@@ -27,10 +27,9 @@ private static final ObjectMapper objectMapper = new ObjectMapper();
 
         LOG.info("Create Spot:" + input);
 
-        //API gateway puts json POST data to a body object
+        //API gateway puts json POST data into a body object
         Object body = input.get("body");
 
-        String id = null;
         String message = "Created Spot successfully.";
         int statusCode = 200;
 
@@ -38,8 +37,8 @@ private static final ObjectMapper objectMapper = new ObjectMapper();
 
             // parse post and create spot
             Spot spot = objectMapper.readValue(body.toString(), Spot.class);
-            SpotService spotService = new SpotService();
-            id = spotService.save(spot);
+            SpotService spotService = new SpotService(Spot.class);
+            spotService.save(spot);
 
         }catch(Exception e){
 
@@ -50,7 +49,7 @@ private static final ObjectMapper objectMapper = new ObjectMapper();
 
         return ApiGatewayResponse.builder()
         .setStatusCode(statusCode)
-        .setObjectBody(new CrudSpotResponse(id, message))
+        .setObjectBody(new CrudSpotResponse(null, message))
         .build();
     }
 }

@@ -24,8 +24,8 @@ public class GetAllSpotsHandler implements RequestHandler<Map<String, Object>, A
 
 		LOG.info("Get all spots");
 
-        SpotService spotService = new SpotService();
-        List<Spot> spots = spotService.findAllSpots();
+        SpotService spotService = new SpotService(Spot.class);
+        List<Spot> spots = spotService.findAll();
 
         return ApiGatewayResponse.builder()
 				.setStatusCode(200)

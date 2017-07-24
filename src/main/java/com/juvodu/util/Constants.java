@@ -8,7 +8,5 @@ package com.juvodu.util;
 public class Constants {
 
     public static final String DB_NAME = "spot";
-    public static final String DB_FIELD_ID = "id";
-    public static final String DB_FIELD_NAME = "name";
-    public static final String DB_FIELD_DESC = "description";
+    public static final String DB_NAME_TEST = "spot_test";
 }

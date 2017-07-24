@@ -2,6 +2,7 @@ package com.juvodu.serverless.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.juvodu.database.model.Spot;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudSpotResponse;
@@ -37,7 +38,7 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
             LOG.info("Get spot by id: " + id);
 
             //get spot
-            SpotService spotService = new SpotService();
+            SpotService spotService = new SpotService(Spot.class);
             result = spotService.getSpotById(id);
 
         } catch (Exception e) {

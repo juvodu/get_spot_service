@@ -3,82 +3,112 @@ package com.juvodu.service;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
-import com.juvodu.database.ItemMapper;
+import com.juvodu.database.model.Continent;
 import com.juvodu.database.model.Spot;
-import com.juvodu.util.Constants;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Service for Spot retrieval and processing.
  *
  * @author Juvodu
  */
-public class SpotService {
+public class SpotService<T extends Spot> {
 
-    private final AmazonDynamoDB client;
-    private final Table table;
+    private final DynamoDBMapper mapper;
+    private final Class<T> spotClass;
 
-    public SpotService(){
+    public SpotService(Class<T> spotClass){
 
-        this.client = AmazonDynamoDBClientBuilder.standard()
+        this.spotClass = spotClass;
+        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(Regions.EU_CENTRAL_1)
                 .build();
-        DynamoDB dynamoDB = new DynamoDB(client);
-        table = dynamoDB.getTable(Constants.DB_NAME);
+        this.mapper = new DynamoDBMapper(client);
     }
 
-    public Spot getSpotById(String id){
+    /**
+     * Retrieve a spot by its hash key
+     *
+     * @param id
+     *          of the spot
+     *
+     * @return the spot model populated with data
+     */
+    public T getSpotById(String id){
 
-        Item item = table.getItem("id", id);
-        return ItemMapper.createSpot(item);
+        return mapper.load(spotClass, id);
     }
 
-    public List<Spot> findAllSpots(){
-
-        ScanRequest scanRequest = new ScanRequest().withTableName(Constants.DB_NAME);
-        ScanResult scanResult = client.scan(scanRequest);
-
-        List<Spot> spots = new ArrayList<>();
-        for (Map<String, AttributeValue> item : scanResult.getItems()) {
-            Spot spot = new Spot();
-            spot.setId(item.get(Constants.DB_FIELD_ID).getS());
-            spot.setName(item.get(Constants.DB_FIELD_NAME).getS());
-            spot.setDescription(item.get(Constants.DB_FIELD_DESC).getS());
-            spots.add(spot);
-        }
-        return spots;
-    }
-
+    /**
+     * Save or update a spot instance
+     *
+     * @param spot
+     *          the spot to save, if an item with the same id exists it will be updated
+     *
+     * @return the generated id (UUID) of the spot item
+     */
     public String save(Spot spot){
 
-        String id = UUID.randomUUID().toString();
-        spot.setId(id);
-        return update(spot);
-    }
-
-    public String update(Spot spot){
-
-        Item item = new Item();
-        item.withString(Constants.DB_FIELD_ID, spot.getId());
-        item.withString(Constants.DB_FIELD_NAME, spot.getName());
-        item.withString(Constants.DB_FIELD_DESC, spot.getDescription());
-        table.putItem(item);
-
+        // save does not return anything, but populates the generated id
+        mapper.save(spot);
         return spot.getId();
     }
 
-    public void delete(String id){
+    /**
+     * Delete the spot instance
+     *
+     * @param spot
+     *          the spot instance to delete
+     */
+    public void delete(T spot){
 
-        table.deleteItem("id", id);
+        mapper.delete(spot);
+    }
+
+    /**
+     * Delete all table entries - for testing purposes only
+     */
+    public void deleteAll(){
+
+        for(T spot : findAll()){
+            delete(spot);
+        }
+    }
+
+    /**
+     * Return all available spots, scan requests are potentially slow
+     *
+     * @return list of spots saved in the DB
+     */
+    public List<T> findAll(){
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        return mapper.scan(spotClass, scanExpression);
+    }
+
+    /**
+     *
+     * @param continent
+     * @return
+     */
+    public List<T> findByContinent(Continent continent){
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS(continent.getCode()));
+
+        DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
+                .withKeyConditionExpression("continent = :val1")
+                .withIndexName("continent-index")
+                .withConsistentRead(false)
+                .withExpressionAttributeValues(eav);
+
+        return mapper.query(spotClass, queryExpression);
     }
 }

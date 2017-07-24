@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.juvodu.database.model.Spot;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudSpotResponse;
 import com.juvodu.service.SpotService;
@@ -41,8 +42,9 @@ public class DeleteSpotHandler implements RequestHandler<Map<String, Object>, Ap
             LOG.info("Delete Spot with Id:" + id);
 
             // delete spot
-            SpotService spotService = new SpotService();
-            spotService.delete(id);
+            SpotService spotService = new SpotService(Spot.class);
+            Spot spot = spotService.getSpotById(id);
+            spotService.delete(spot);
 
         } catch (Exception e) {
 
