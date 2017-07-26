@@ -1,5 +1,6 @@
 package com.juvodu.service;
 
+import ch.hsr.geohash.WGS84Point;
 import com.juvodu.database.model.Continent;
 import com.juvodu.database.model.Country;
 import com.juvodu.database.model.Spot;
@@ -23,6 +24,10 @@ public class SpotServiceTest {
     private static SpotService spotService;
     private final Country france = new Country("FR", "France");
     private final Country us =  new Country("US", "United States");
+    private final Country spain = new Country("ES", "Spain");
+    private final WGS84Point hossegor = new WGS84Point(43.671223, -1.441445);
+    private final WGS84Point hermosa = new WGS84Point(33.863329, -118.403169);
+    private final WGS84Point liencres = new WGS84Point(43.452663, -3.963651);
 
     @BeforeClass
     public static void beforeClass(){
@@ -40,14 +45,14 @@ public class SpotServiceTest {
     public void givenSpotWhenSaveThenSuccess(){
 
         //execute
-        spotService.save(createSpot(Continent.EU, france));
+        spotService.save(createSpot(Continent.NA, us, hermosa));
     }
 
     @Test
     public void givenSavedSpotWhenDeleteThenSuccess(){
 
         //setup
-        Spot spot = createSpot(Continent.EU, france);
+        Spot spot = createSpot(Continent.EU, france, hossegor);
         spotService.save(spot);
 
         //execute
@@ -58,7 +63,7 @@ public class SpotServiceTest {
     public void givenSavedSpotWhenGetSpotByIdThenReturnSpot(){
 
         //setup
-        Spot spot = createSpot(Continent.EU, france);
+        Spot spot = createSpot(Continent.EU, france, hossegor);
         String id = spotService.save(spot);
 
         //execute
@@ -67,14 +72,15 @@ public class SpotServiceTest {
         //verify
         assertNotNull(spotResult);
         assertEquals(id, spotResult.getId());
+        assertEquals(hossegor, spotResult.getPosition());
     }
 
     @Test
     public void given2SavedSpotsWhenGetAllSpotsThenReturnBoth(){
 
         //setup
-        Spot spot1 = createSpot(Continent.EU, france);
-        Spot spot2 = createSpot(Continent.NA, us);
+        Spot spot1 = createSpot(Continent.EU, france, hossegor);
+        Spot spot2 = createSpot(Continent.NA, us, hermosa);
         spotService.save(spot1);
         spotService.save(spot2);
 
@@ -84,14 +90,13 @@ public class SpotServiceTest {
         //verify
         assertNotNull(allSpots);
         assertEquals(2, allSpots.size());
-        System.out.println(allSpots.size());
     }
 
     @Test
     public void givenExistingSpotWhenUpdateThenSuccess(){
 
         //setup
-        Spot spot = createSpot(Continent.EU, france);
+        Spot spot = createSpot(Continent.EU, france, hossegor);
         spotService.save(spot);
         spot.setName("Updated spot");
         spot.setDescription("Updated spot description");
@@ -109,8 +114,8 @@ public class SpotServiceTest {
     public void givenSpotWithContinentWhenFindByContinentThenReturnSpot(){
 
         //setup
-        SpotTestModel spotEU = createSpot(Continent.EU, france);
-        SpotTestModel spotNA = createSpot(Continent.NA, us);
+        Spot spotEU = createSpot(Continent.EU, france, hossegor);
+        Spot spotNA = createSpot(Continent.NA, us, hermosa);
         String id = spotService.save(spotEU);
         spotService.save(spotNA);
 
@@ -129,7 +134,7 @@ public class SpotServiceTest {
     public void givenSpotWithCountryWhenFindByCountryThenReturnSpot(){
 
         //setup
-        Spot spot = createSpot(Continent.EU, france);
+        Spot spot = createSpot(Continent.EU, france, hossegor);
         spotService.save(spot);
 
         //execute
@@ -143,6 +148,47 @@ public class SpotServiceTest {
         assertEquals(france.getCode(), spotResult.getCountry().getCode());
     }
 
+    @Test
+    public void givenSearchRadiusAndOneSpotInRadiusWhenFindInRadiusThenReturnOneSpot(){
+
+        //setup
+        Spot spot1 = createSpot(Continent.EU, france, hossegor);
+        Spot spot2 = createSpot(Continent.NA, us, hermosa);
+        Spot spot3 = createSpot(Continent.EU, spain, liencres);
+        spotService.save(spot1);
+        spotService.save(spot2);
+        spotService.save(spot3);
+
+        //execute
+        List<Spot> spots = spotService.findInRadius(Continent.EU, spot1.getPosition(), 1);
+
+        //verify
+        assertNotNull(spots);
+        assertEquals(1, spots.size());
+        Spot spotResult = spots.get(0);
+        assertEquals(Continent.EU, spotResult.getContinent());
+        assertEquals(france.getCode(), spotResult.getCountry().getCode());
+    }
+
+    @Test
+    public void givenSearchRadiusTwoSpotsInRadiusWhenFindInRadiusThenReturnTwoSpots(){
+
+        //setup
+        Spot spot1 = createSpot(Continent.EU, france, hossegor);
+        Spot spot2 = createSpot(Continent.NA, us, hermosa);
+        Spot spot3 = createSpot(Continent.EU, spain, liencres);
+        spotService.save(spot1);
+        spotService.save(spot2);
+        spotService.save(spot3);
+
+        //execute
+        List<Spot> spots = spotService.findInRadius(Continent.EU, spot1.getPosition(), 120000);
+
+        //verify
+        assertNotNull(spots);
+        assertEquals(2, spots.size());
+    }
+
     /**
      * Helper function to create a spot
      *
@@ -153,13 +199,14 @@ public class SpotServiceTest {
      *
      * @return the created instance of the spot
      */
-    private SpotTestModel createSpot(Continent continent, Country country){
+    private Spot createSpot(Continent continent, Country country, WGS84Point position){
 
-        SpotTestModel spotTestModel = new SpotTestModel();
+        Spot spotTestModel = new SpotTestModel();
         spotTestModel.setName("unit test name");
         spotTestModel.setDescription("unit test description");
         spotTestModel.setContinent(continent);
         spotTestModel.setCountry(country);
+        spotTestModel.setPosition(position);
 
         return spotTestModel;
     }

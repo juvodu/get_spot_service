@@ -1,10 +1,10 @@
 package com.juvodu.database.model;
 
+import ch.hsr.geohash.WGS84Point;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import com.javadocmd.simplelatlng.LatLng;
 import com.juvodu.database.converter.ContinentTypeConverter;
 import com.juvodu.database.converter.CountryTypeConverter;
-import com.juvodu.database.converter.LatLngTypeConverter;
+import com.juvodu.database.converter.PositionTypeConverter;
 
 /**
  * Model representing the Spot table
@@ -30,9 +30,12 @@ public class Spot {
     @DynamoDBTypeConverted(converter = CountryTypeConverter.class)
     private Country country;
 
-    @DynamoDBTypeConverted(converter = LatLngTypeConverter.class)
-    @DynamoDBAttribute(attributeName = "position")
-    private LatLng position;
+    @DynamoDBTypeConverted(converter = PositionTypeConverter.class)
+    @DynamoDBAttribute
+    private WGS84Point position;
+
+    @DynamoDBAttribute
+    private String geohash;
 
     public String getId() {
         return id;
@@ -70,11 +73,19 @@ public class Spot {
         this.country = country;
     }
 
-    public LatLng getPosition() {
+    public WGS84Point getPosition() {
         return position;
     }
 
-    public void setPosition(LatLng position) {
+    public void setPosition(WGS84Point position) {
         this.position = position;
+    }
+
+    public String getGeohash() {
+        return geohash;
+    }
+
+    public void setGeohash(String geohash) {
+        this.geohash = geohash;
     }
 }
