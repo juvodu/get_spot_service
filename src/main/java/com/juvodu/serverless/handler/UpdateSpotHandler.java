@@ -39,8 +39,7 @@ public class UpdateSpotHandler implements RequestHandler<Map<String, Object>, Ap
             // parse post and update spot
             Spot spot = objectMapper.readValue(body.toString(), Spot.class);
             SpotService spotService = new SpotService(Spot.class);
-            spotService.save(spot);
-            id = spot.getId();
+            id = spotService.save(spot);
 
         }catch(Exception e){
 

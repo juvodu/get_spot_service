@@ -1,5 +1,8 @@
 package com.juvodu.database.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Country wrapper, containing the ISO 2 letter code and a verbose name
  *
@@ -17,7 +20,8 @@ public class Country implements Comparable<Country> {
      */
     private String name;
 
-    public Country(String code, String name) {
+    @JsonCreator
+    public Country(@JsonProperty("code") String code, @JsonProperty("name") String name) {
         super();
         this.code = code;
         this.name = name;

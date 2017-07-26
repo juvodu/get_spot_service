@@ -19,7 +19,7 @@ functions:
           method: get
           cors: true
   getSpot:
-      handler: com.juvodu.serverless.handler.GetSpotHandler
+      handler: com.juvodu.serverless.handler.GetSpotByParameterHandler
       events:
         - http:
             path: spot
@@ -107,7 +107,8 @@ resources:
                 - dynamodb:DeleteItem
                 - dynamodb:UpdateItem
                 - dynamodb:Scan
-              Resource: arn:aws:dynamodb:*:*:table/spot
+                - dynamodb:Query
+              Resource: arn:aws:dynamodb:*:*:table/spot*
         Roles:
           - Ref: IamRoleLambdaExecution
 

@@ -1,9 +1,9 @@
 package com.juvodu.database;
 
 import ch.hsr.geohash.GeoHash;
-import ch.hsr.geohash.WGS84Point;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.juvodu.database.model.Position;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class DatabaseHelper<T> {
      *
      * @return binary geohash as a string
      */
-    public String createBinaryGeohash(WGS84Point position){
+    public String createBinaryGeohash(Position position){
 
         GeoHash geoHash = GeoHash.withBitPrecision(position.getLatitude(), position.getLongitude(), 64);
         return geoHash.toBinaryString();

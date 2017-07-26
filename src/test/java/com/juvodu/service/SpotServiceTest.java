@@ -1,8 +1,8 @@
 package com.juvodu.service;
 
-import ch.hsr.geohash.WGS84Point;
 import com.juvodu.database.model.Continent;
 import com.juvodu.database.model.Country;
+import com.juvodu.database.model.Position;
 import com.juvodu.database.model.Spot;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -25,9 +25,9 @@ public class SpotServiceTest {
     private final Country france = new Country("FR", "France");
     private final Country us =  new Country("US", "United States");
     private final Country spain = new Country("ES", "Spain");
-    private final WGS84Point hossegor = new WGS84Point(43.671223, -1.441445);
-    private final WGS84Point hermosa = new WGS84Point(33.863329, -118.403169);
-    private final WGS84Point liencres = new WGS84Point(43.452663, -3.963651);
+    private final Position hossegor = new Position(43.671223, -1.441445);
+    private final Position hermosa = new Position(33.863329, -118.403169);
+    private final Position liencres = new Position(43.452663, -3.963651);
 
     @BeforeClass
     public static void beforeClass(){
@@ -199,7 +199,7 @@ public class SpotServiceTest {
      *
      * @return the created instance of the spot
      */
-    private Spot createSpot(Continent continent, Country country, WGS84Point position){
+    private Spot createSpot(Continent continent, Country country, Position position){
 
         Spot spotTestModel = new SpotTestModel();
         spotTestModel.setName("unit test name");

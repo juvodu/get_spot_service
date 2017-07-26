@@ -22,11 +22,14 @@ public class ParameterParser {
     public static Map<String, String> getParameters(String parametersStr) throws UnsupportedEncodingException {
 
         //remove curly braces if parameters are wrapped as an object
+        parametersStr = parametersStr.replace(" ", "");
         parametersStr = parametersStr.replace("{", "");
         parametersStr = parametersStr.replace("}", "");
 
         Map<String, String> query_pairs = new LinkedHashMap<>();
-        String[] pairs = parametersStr.split("&");
+
+        //api gateway converts get parameters {?continent=EU&country=FR} to JSON {continent=EU,country=FR}
+        String[] pairs = parametersStr.split(",");
         for(String pair :pairs){
             int idx = pair.indexOf("=");
             query_pairs.put(

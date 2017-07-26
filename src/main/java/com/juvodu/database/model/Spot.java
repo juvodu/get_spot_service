@@ -1,7 +1,7 @@
 package com.juvodu.database.model;
 
-import ch.hsr.geohash.WGS84Point;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.juvodu.database.converter.ContinentTypeConverter;
 import com.juvodu.database.converter.CountryTypeConverter;
 import com.juvodu.database.converter.PositionTypeConverter;
@@ -32,8 +32,9 @@ public class Spot {
 
     @DynamoDBTypeConverted(converter = PositionTypeConverter.class)
     @DynamoDBAttribute
-    private WGS84Point position;
+    private Position position;
 
+    @JsonIgnore // no need to return the geohash as JSON, its for internal use only
     @DynamoDBAttribute
     private String geohash;
 
@@ -73,11 +74,11 @@ public class Spot {
         this.country = country;
     }
 
-    public WGS84Point getPosition() {
+    public Position getPosition() {
         return position;
     }
 
-    public void setPosition(WGS84Point position) {
+    public void setPosition(Position position) {
         this.position = position;
     }
 

@@ -12,6 +12,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.juvodu.database.DatabaseHelper;
 import com.juvodu.database.model.Continent;
 import com.juvodu.database.model.Country;
+import com.juvodu.database.model.Position;
 import com.juvodu.database.model.Spot;
 import com.juvodu.util.Constants;
 
@@ -149,11 +150,10 @@ public class SpotService<T extends Spot> {
      *
      * @return list of spots within the specifed radius
      */
-    public List<T> findInRadius(Continent continent, WGS84Point position, int radius){
+    public List<T> findInRadius(Continent continent, Position position, int radius){
 
         List<T> spots = new LinkedList<>();
-
-        GeoHashCircleQuery geoHashCircleQuery = new GeoHashCircleQuery(position, radius);
+        GeoHashCircleQuery geoHashCircleQuery = new GeoHashCircleQuery(new WGS84Point(position.getLatitude(), position.getLongitude()), radius);
         List<GeoHash> searchHashes = geoHashCircleQuery.getSearchHashes();
 
         for(GeoHash geoHash : searchHashes){

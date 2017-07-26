@@ -1,7 +1,7 @@
 package com.juvodu.database.converter;
 
-import ch.hsr.geohash.WGS84Point;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
+import com.juvodu.database.model.Position;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -9,16 +9,16 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Juvodu
  */
-public class PositionTypeConverter implements DynamoDBTypeConverter<String, WGS84Point> {
+public class PositionTypeConverter implements DynamoDBTypeConverter<String, Position> {
 
     @Override
-    public String convert(WGS84Point position) {
+    public String convert(Position position) {
 
         return String.format("%s ; %s", position.getLatitude(), position.getLongitude());
     }
 
     @Override
-    public WGS84Point unconvert(String positionStr) {
+    public Position unconvert(String positionStr) {
 
         double latitude = 0;
         double longitude = 0;
@@ -31,7 +31,7 @@ public class PositionTypeConverter implements DynamoDBTypeConverter<String, WGS8
         }catch (Exception e) {
             e.printStackTrace();
         }
-        return new WGS84Point(latitude, longitude);
+        return new Position(latitude, longitude);
     }
 }
 

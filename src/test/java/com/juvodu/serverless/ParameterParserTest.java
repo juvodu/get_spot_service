@@ -25,12 +25,12 @@ public class ParameterParserTest {
     @Test
     public void getMultipleParameters() throws Exception {
 
-        String testParameter = "{name=AWS&desc=cloud}";
+        String testParameter = "{continent=EU, country=FR}";
         Map<String, String> parameters = ParameterParser.getParameters(testParameter);
-        String name = parameters.get("name");
-        String desc = parameters.get("desc");
-        assertEquals("AWS", name);
-        assertEquals("cloud", desc);
+        String continent = parameters.get("continent");
+        String country = parameters.get("country");
+        assertEquals("EU", continent);
+        assertEquals("FR", country);
     }
 
 }

@@ -31,6 +31,7 @@ private static final ObjectMapper objectMapper = new ObjectMapper();
         Object body = input.get("body");
 
         String message = "Created Spot successfully.";
+        String id = null;
         int statusCode = 200;
 
         try {
@@ -38,7 +39,7 @@ private static final ObjectMapper objectMapper = new ObjectMapper();
             // parse post and create spot
             Spot spot = objectMapper.readValue(body.toString(), Spot.class);
             SpotService spotService = new SpotService(Spot.class);
-            spotService.save(spot);
+            id = spotService.save(spot);
 
         }catch(Exception e){
 
@@ -49,7 +50,7 @@ private static final ObjectMapper objectMapper = new ObjectMapper();
 
         return ApiGatewayResponse.builder()
         .setStatusCode(statusCode)
-        .setObjectBody(new CrudSpotResponse(null, message))
+        .setObjectBody(new CrudSpotResponse(id, message))
         .build();
     }
 }
