@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.juvodu.database.model.Continent;
 import com.juvodu.database.model.Country;
+import com.juvodu.database.model.Position;
 import com.juvodu.database.model.Spot;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
@@ -69,6 +70,9 @@ public class GetSpotByParameterHandler implements RequestHandler<Map<String, Obj
         //get spot by id
         String id = queryStringParametersMap.get("id");
         String continent = queryStringParametersMap.get("continent");
+        String lat = queryStringParametersMap.get("lat");
+        String lon = queryStringParametersMap.get("lon");
+        String dist = queryStringParametersMap.get("distance");
         String country = queryStringParametersMap.get("country");
 
         LOG.info("Continent " + continent);
@@ -85,13 +89,20 @@ public class GetSpotByParameterHandler implements RequestHandler<Map<String, Obj
             Locale locale = new Locale("", country);
             spots.addAll(spotService.findByCountry(Continent.valueOf(continent), new Country(locale.getCountry(), locale.getDisplayName())));
 
+        }else if (!StringUtils.isAnyBlank(continent, lat, lon, dist)){
+
+            LOG.info("Find spots by distance: " + dist + " center: " + lat + "," + lon);
+            int distance = Integer.valueOf(dist);
+            double latitude = Double.valueOf(lat);
+            double longitude = Double.valueOf(lon);
+            spots.addAll(spotService.findByDistance(Continent.valueOf(continent), new Position(latitude, longitude), distance));
+
         }else if(StringUtils.isNotBlank(continent)){
 
             LOG.info("Find spots by continent: " + continent);
             spots.addAll(spotService.findByContinent(Continent.valueOf(continent)));
 
         }
-        //TODO: get spot by distance from position
 
         return spots;
     }

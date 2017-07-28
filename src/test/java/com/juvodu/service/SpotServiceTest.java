@@ -160,7 +160,7 @@ public class SpotServiceTest {
         spotService.save(spot3);
 
         //execute
-        List<Spot> spots = spotService.findInRadius(Continent.EU, spot1.getPosition(), 1);
+        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 1);
 
         //verify
         assertNotNull(spots);
@@ -182,7 +182,7 @@ public class SpotServiceTest {
         spotService.save(spot3);
 
         //execute
-        List<Spot> spots = spotService.findInRadius(Continent.EU, spot1.getPosition(), 120000);
+        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 120000);
 
         //verify
         assertNotNull(spots);

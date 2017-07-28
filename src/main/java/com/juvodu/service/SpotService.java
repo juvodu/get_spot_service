@@ -150,7 +150,7 @@ public class SpotService<T extends Spot> {
      *
      * @return list of spots within the specifed radius
      */
-    public List<T> findInRadius(Continent continent, Position position, int radius){
+    public List<T> findByDistance(Continent continent, Position position, int radius){
 
         List<T> spots = new LinkedList<>();
         GeoHashCircleQuery geoHashCircleQuery = new GeoHashCircleQuery(new WGS84Point(position.getLatitude(), position.getLongitude()), radius);
