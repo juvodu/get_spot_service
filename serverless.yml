@@ -5,6 +5,16 @@ provider:
   runtime: java8
   stage: dev
   region: eu-central-1
+  apiKeys:
+      - ${self:provider.stage}-letmego
+  usagePlan:
+    quota:
+      limit: 5000
+      offset: 2
+      period: MONTH
+    throttle:
+      burstLimit: 200
+      rateLimit: 100
 
 # you can add packaging information here
 package:
@@ -18,6 +28,7 @@ functions:
           path: spots
           method: get
           cors: true
+          private: true
   getSpot:
       handler: com.juvodu.serverless.handler.GetSpotByParameterHandler
       events:
@@ -25,6 +36,7 @@ functions:
             path: spot
             method: get
             cors: true
+            private: true
   createSpot:
     handler: com.juvodu.serverless.handler.CreateSpotHandler
     events:
@@ -32,6 +44,7 @@ functions:
           path: spot/create
           method: post
           cors: true
+          private: true
   deleteSpot:
     handler: com.juvodu.serverless.handler.DeleteSpotHandler
     events:
@@ -39,6 +52,7 @@ functions:
           path: spot/delete
           method: post
           cors: true
+          private: true
   updateSpot:
     handler: com.juvodu.serverless.handler.UpdateSpotHandler
     events:
@@ -46,6 +60,7 @@ functions:
           path: spot/update
           method: post
           cors: true
+          private: true
 
 # The "Resources" your "Functions" use.  Raw AWS CloudFormation goes in here.
 resources:
