@@ -207,6 +207,7 @@ public class SpotServiceTest {
         spotTestModel.setContinent(continent);
         spotTestModel.setCountry(country);
         spotTestModel.setPosition(position);
+        spotTestModel.setImage("TestImage");
 
         return spotTestModel;
     }
