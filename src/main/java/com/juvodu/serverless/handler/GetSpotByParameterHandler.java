@@ -2,10 +2,7 @@ package com.juvodu.serverless.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.juvodu.database.model.Continent;
-import com.juvodu.database.model.Country;
-import com.juvodu.database.model.Position;
-import com.juvodu.database.model.Spot;
+import com.juvodu.database.model.*;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudSpotResponse;
@@ -64,7 +61,7 @@ public class GetSpotByParameterHandler implements RequestHandler<Map<String, Obj
      */
     private List<Spot> findSpotsByParameter(Map<String, String> queryStringParametersMap){
 
-        SpotService spotService = new SpotService(Spot.class);
+        SpotService baseSpotService = new SpotService(BaseSpot.class);
         List<Spot> spots = new ArrayList<>();
 
         //get spot by id
@@ -81,13 +78,14 @@ public class GetSpotByParameterHandler implements RequestHandler<Map<String, Obj
         if(StringUtils.isNotBlank(id)){
 
             LOG.info("Get spot by id: " + id);
+            SpotService spotService = new SpotService(Spot.class);
             spots.add((Spot) spotService.getSpotById(id));
 
         }else if(!StringUtils.isAnyBlank(continent, country)){
 
             LOG.info("Find spots by country: " + country);
             Locale locale = new Locale("", country);
-            spots.addAll(spotService.findByCountry(Continent.valueOf(continent), new Country(locale.getCountry(), locale.getDisplayName())));
+            spots.addAll(baseSpotService.findByCountry(Continent.valueOf(continent), new Country(locale.getCountry(), locale.getDisplayName())));
 
         }else if (!StringUtils.isAnyBlank(continent, lat, lon, dist)){
 
@@ -95,12 +93,12 @@ public class GetSpotByParameterHandler implements RequestHandler<Map<String, Obj
             int distance = Integer.valueOf(dist);
             double latitude = Double.valueOf(lat);
             double longitude = Double.valueOf(lon);
-            spots.addAll(spotService.findByDistance(Continent.valueOf(continent), new Position(latitude, longitude), distance));
+            spots.addAll(baseSpotService.findByDistance(Continent.valueOf(continent), new Position(latitude, longitude), distance));
 
         }else if(StringUtils.isNotBlank(continent)){
 
             LOG.info("Find spots by continent: " + continent);
-            spots.addAll(spotService.findByContinent(Continent.valueOf(continent)));
+            spots.addAll(baseSpotService.findByContinent(Continent.valueOf(continent)));
 
         }
 
