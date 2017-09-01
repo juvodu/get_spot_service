@@ -146,14 +146,15 @@ public class SpotService<T extends BaseSpot> {
      * @param position
      *          which is the center of the radius
      * @param searchRadius
-     *          search radius in meter
+     *          search radius in km
      *
      * @return list of spots within the specifed radius
      */
     public List<T> findByDistance(Continent continent, Position position, int searchRadius){
 
+        int searchRadiusMeter = searchRadius * 1000;
         List<T> spots = new LinkedList<>();
-        GeoHashCircleQuery geoHashCircleQuery = new GeoHashCircleQuery(new WGS84Point(position.getLatitude(), position.getLongitude()), searchRadius);
+        GeoHashCircleQuery geoHashCircleQuery = new GeoHashCircleQuery(new WGS84Point(position.getLatitude(), position.getLongitude()), searchRadiusMeter);
         List<GeoHash> searchHashes = geoHashCircleQuery.getSearchHashes();
 
         for(GeoHash geoHash : searchHashes){
@@ -165,8 +166,8 @@ public class SpotService<T extends BaseSpot> {
             spots.addAll(mapper.query(spotClass, queryExpression));
         }
 
-        // calculate distance to each spot
-        spots.forEach(spot -> spot.setDistance(GeoHelper.getDistance(position, spot.getPosition())));
+        // calculate distance to each spot in km
+        spots.forEach(spot -> spot.setDistance(GeoHelper.getDistance(position, spot.getPosition())/1000));
 
         // fine filtering and sorting by distance
         spots = spots.stream()

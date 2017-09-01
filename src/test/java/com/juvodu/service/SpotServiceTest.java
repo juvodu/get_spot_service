@@ -183,7 +183,7 @@ public class SpotServiceTest {
         spotService.save(spot3);
 
         //execute - distance between both spots is 205km
-        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 210000);
+        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 210);
 
         //verify
         assertNotNull(spots);
