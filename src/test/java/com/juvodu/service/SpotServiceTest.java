@@ -67,7 +67,7 @@ public class SpotServiceTest {
         String id = spotService.save(spot);
 
         //execute
-        Spot spotResult = spotService.getSpotById(id);
+        Spot spotResult = (Spot) spotService.getSpotById(id);
 
         //verify
         assertNotNull(spotResult);
@@ -105,7 +105,7 @@ public class SpotServiceTest {
         spotService.save(spot);
 
         //verify
-        Spot spot_result = spotService.getSpotById(spot.getId());
+        Spot spot_result = (Spot) spotService.getSpotById(spot.getId());
         assertEquals("Updated spot", spot_result.getName());
         assertEquals("Updated spot description", spot_result.getDescription());
     }
@@ -166,6 +166,7 @@ public class SpotServiceTest {
         assertNotNull(spots);
         assertEquals(1, spots.size());
         Spot spotResult = spots.get(0);
+
         assertEquals(Continent.EU, spotResult.getContinent());
         assertEquals(france.getCode(), spotResult.getCountry().getCode());
     }
@@ -181,8 +182,8 @@ public class SpotServiceTest {
         spotService.save(spot2);
         spotService.save(spot3);
 
-        //execute
-        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 120000);
+        //execute - distance between both spots is 205km
+        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 210000);
 
         //verify
         assertNotNull(spots);
@@ -204,10 +205,12 @@ public class SpotServiceTest {
         Spot spotTestModel = new SpotTestModel();
         spotTestModel.setName("unit test name");
         spotTestModel.setDescription("unit test description");
+        spotTestModel.setShortDescription("unit short description");
         spotTestModel.setContinent(continent);
         spotTestModel.setCountry(country);
         spotTestModel.setPosition(position);
         spotTestModel.setImage("TestImage");
+        spotTestModel.setThumbnail("TestThumbnail");
 
         return spotTestModel;
     }

@@ -81,7 +81,7 @@ public class GetSpotByParameterHandler implements RequestHandler<Map<String, Obj
         if(StringUtils.isNotBlank(id)){
 
             LOG.info("Get spot by id: " + id);
-            spots.add(spotService.getSpotById(id));
+            spots.add((Spot) spotService.getSpotById(id));
 
         }else if(!StringUtils.isAnyBlank(continent, country)){
 

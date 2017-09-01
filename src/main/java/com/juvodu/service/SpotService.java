@@ -10,21 +10,21 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.juvodu.database.DatabaseHelper;
-import com.juvodu.database.model.Continent;
-import com.juvodu.database.model.Country;
-import com.juvodu.database.model.Position;
-import com.juvodu.database.model.Spot;
+import com.juvodu.database.model.*;
 import com.juvodu.util.Constants;
+import com.juvodu.util.GeoHelper;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service for Spot retrieval and processing.
  *
  * @author Juvodu
  */
-public class SpotService<T extends Spot> {
+public class SpotService<T extends BaseSpot> {
 
     private final DynamoDBMapper mapper;
     private final Class<T> spotClass;
@@ -145,28 +145,34 @@ public class SpotService<T extends Spot> {
      *          the continent in which the search takes place (partition key of continent-geohash-index table)
      * @param position
      *          which is the center of the radius
-     * @param radius
+     * @param searchRadius
      *          search radius in meter
      *
      * @return list of spots within the specifed radius
      */
-    public List<T> findByDistance(Continent continent, Position position, int radius){
+    public List<T> findByDistance(Continent continent, Position position, int searchRadius){
 
         List<T> spots = new LinkedList<>();
-        GeoHashCircleQuery geoHashCircleQuery = new GeoHashCircleQuery(new WGS84Point(position.getLatitude(), position.getLongitude()), radius);
+        GeoHashCircleQuery geoHashCircleQuery = new GeoHashCircleQuery(new WGS84Point(position.getLatitude(), position.getLongitude()), searchRadius);
         List<GeoHash> searchHashes = geoHashCircleQuery.getSearchHashes();
 
         for(GeoHash geoHash : searchHashes){
 
+            //rough and fast filtering by geohash
             String binaryHashString = geoHash.toBinaryString();
             DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
                     binaryHashString, Constants.CONTINENT_GEOHASH_INDEX, "continent = :val1 and begins_with(geohash,:val2)");
             spots.addAll(mapper.query(spotClass, queryExpression));
         }
 
-        //TODO: querying by geohash will return more spots than in the actual
-        // radius as spots in the boundingbox of the geohash are also included
-        //=> apply additional distance filtering
+        // calculate distance to each spot
+        spots.forEach(spot -> spot.setDistance(GeoHelper.getDistance(position, spot.getPosition())));
+
+        // fine filtering and sorting by distance
+        spots = spots.stream()
+                .filter(spot -> searchRadius >= spot.getDistance())
+                .sorted(Comparator.comparing(T::getDistance))
+                .collect(Collectors.toList());
 
         return spots;
     }

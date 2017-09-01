@@ -2,7 +2,7 @@ package com.juvodu.serverless.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.juvodu.database.model.Spot;
+import com.juvodu.database.model.BaseSpot;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.service.SpotService;
 import org.apache.log4j.Logger;
@@ -24,8 +24,8 @@ public class GetAllSpotsHandler implements RequestHandler<Map<String, Object>, A
 
 		LOG.info("Get all spots");
 
-        SpotService spotService = new SpotService(Spot.class);
-        List<Spot> spots = spotService.findAll();
+        SpotService spotService = new SpotService(BaseSpot.class);
+        List<BaseSpot> spots = spotService.findAll();
 
         return ApiGatewayResponse.builder()
 				.setStatusCode(200)

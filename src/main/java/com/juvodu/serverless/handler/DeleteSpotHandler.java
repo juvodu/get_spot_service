@@ -43,7 +43,7 @@ public class DeleteSpotHandler implements RequestHandler<Map<String, Object>, Ap
 
             // delete spot
             SpotService spotService = new SpotService(Spot.class);
-            Spot spot = spotService.getSpotById(id);
+            Spot spot = (Spot) spotService.getSpotById(id);
             spotService.delete(spot);
 
         } catch (Exception e) {
