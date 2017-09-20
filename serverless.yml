@@ -9,7 +9,7 @@ provider:
       - ${self:provider.stage}-letmego
   usagePlan:
     quota:
-      limit: 5000
+      limit: 50000
       offset: 2
       period: MONTH
     throttle:
