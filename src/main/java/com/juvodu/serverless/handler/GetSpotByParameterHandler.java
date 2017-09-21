@@ -3,10 +3,12 @@ package com.juvodu.serverless.handler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.juvodu.database.model.*;
+import com.juvodu.forecast.exception.WWOMClientException;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudSpotResponse;
 import com.juvodu.service.SpotService;
+import com.juvodu.service.WeatherService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -62,6 +64,7 @@ public class GetSpotByParameterHandler implements RequestHandler<Map<String, Obj
     private List<Spot> findSpotsByParameter(Map<String, String> queryStringParametersMap){
 
         SpotService baseSpotService = new SpotService(BaseSpot.class);
+        WeatherService weatherService = new WeatherService();
         List<Spot> spots = new ArrayList<>();
 
         //get spot by id
@@ -77,9 +80,16 @@ public class GetSpotByParameterHandler implements RequestHandler<Map<String, Obj
 
         if(StringUtils.isNotBlank(id)){
 
+            //TODO: move to separate handler
             LOG.info("Get spot by id: " + id);
             SpotService spotService = new SpotService(Spot.class);
-            spots.add((Spot) spotService.getSpotById(id));
+            Spot spot = (Spot) spotService.getSpotById(id);
+            try {
+                spot.setForecast(weatherService.getForecastForPosition(spot.getPosition()));
+            }catch(WWOMClientException e){
+                e.printStackTrace();
+            }
+            spots.add(spot);
 
         }else if(!StringUtils.isAnyBlank(continent, country)){
 

@@ -115,9 +115,10 @@ public class SpotService<T extends BaseSpot> {
      */
     public List<T> findByContinent(Continent continent){
 
+        String filterExpression = "continent = :val1";
         DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
-                null, Constants.CONTINENT_COUNTRY_INDEX, "continent = :val1");
-        return mapper.query(spotClass, queryExpression);
+                null, Constants.CONTINENT_COUNTRY_INDEX, filterExpression, 100);
+        return mapper.queryPage(spotClass, queryExpression).getResults();
     }
 
     /**
@@ -132,10 +133,11 @@ public class SpotService<T extends BaseSpot> {
      */
     public List<T> findByCountry(Continent continent, Country country){
 
+        String filterExpression = "continent = :val1 and country = :val2";
         DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
-                country.getCode(), Constants.CONTINENT_COUNTRY_INDEX, "continent = :val1 and country = :val2");
+                country.getCode(), Constants.CONTINENT_COUNTRY_INDEX, filterExpression, 100);
 
-        return mapper.query(spotClass, queryExpression);
+        return mapper.queryPage(spotClass, queryExpression).getResults();
     }
 
     /**
@@ -161,9 +163,10 @@ public class SpotService<T extends BaseSpot> {
 
             //rough and fast filtering by geohash
             String binaryHashString = geoHash.toBinaryString();
+            String filterExpression = "continent = :val1 and begins_with(geohash,:val2)";
             DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
-                    binaryHashString, Constants.CONTINENT_GEOHASH_INDEX, "continent = :val1 and begins_with(geohash,:val2)");
-            spots.addAll(mapper.query(spotClass, queryExpression));
+                    binaryHashString, Constants.CONTINENT_GEOHASH_INDEX, filterExpression, 10);
+            spots.addAll(mapper.queryPage(spotClass, queryExpression).getResults());
         }
 
         // calculate distance to each spot in km

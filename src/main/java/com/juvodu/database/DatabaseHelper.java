@@ -40,10 +40,12 @@ public class DatabaseHelper<T> {
      *          name of index table on which query will run
      * @param conditionExpression
      *          contains the actual operators used for filtering
+     * @param limit
+     *          max amount of results
      *
      * @return prepared query to run on dynamo db table
      */
-    public DynamoDBQueryExpression<T> createQueryExpression(String partitionKey, String sortKey, String index, String conditionExpression){
+    public DynamoDBQueryExpression<T> createQueryExpression(String partitionKey, String sortKey, String index, String conditionExpression, int limit){
 
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":val1", new AttributeValue().withS(partitionKey));
@@ -57,7 +59,8 @@ public class DatabaseHelper<T> {
                 .withKeyConditionExpression(conditionExpression)
                 .withIndexName(index)
                 .withConsistentRead(false)
-                .withExpressionAttributeValues(eav);
+                .withExpressionAttributeValues(eav)
+                .withLimit(limit);
 
         return queryExpression;
     }

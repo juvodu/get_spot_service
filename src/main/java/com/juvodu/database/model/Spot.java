@@ -1,10 +1,12 @@
 package com.juvodu.database.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.juvodu.database.converter.ContinentTypeConverter;
+import com.juvodu.forecast.model.Forecast;
 
 /**
  * Model representing the complete Spot table
@@ -78,6 +80,9 @@ public class Spot extends BaseSpot{
 
     @DynamoDBAttribute
     private String weekEndCrowd;
+
+    @DynamoDBIgnore // weather information will be requested on demand
+    private Forecast forecast;
 
     public String getDescription() {
         return description;
@@ -244,5 +249,13 @@ public class Spot extends BaseSpot{
 
     public void setWeekCrowd(String weekCrowd) {
         this.weekCrowd = weekCrowd;
+    }
+
+    public Forecast getForecast() {
+        return forecast;
+    }
+
+    public void setForecast(Forecast forecast) {
+        this.forecast = forecast;
     }
 }
