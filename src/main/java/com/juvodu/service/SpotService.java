@@ -110,14 +110,16 @@ public class SpotService<T extends BaseSpot> {
      *
      * @param continent
      *          used to filter spots
+     * @param limit
+     *              the size of the returned result list
      *
      * @return list of spots in the continent
      */
-    public List<T> findByContinent(Continent continent){
+    public List<T> findByContinent(Continent continent, int limit){
 
         String filterExpression = "continent = :val1";
         DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
-                null, Constants.CONTINENT_COUNTRY_INDEX, filterExpression, 100);
+                null, Constants.CONTINENT_COUNTRY_INDEX, filterExpression, limit);
         return mapper.queryPage(spotClass, queryExpression).getResults();
     }
 
@@ -128,14 +130,17 @@ public class SpotService<T extends BaseSpot> {
      *              needs to be specified as it is the partition key of the continent-index
      * @param country
      *              the country to filter for, can be used as it is the range key of the continent-index
+     * @param limit
+     *              the size of the returned result list
+     *
      *
      * @return list of spots filtered by the specified country
      */
-    public List<T> findByCountry(Continent continent, Country country){
+    public List<T> findByCountry(Continent continent, Country country, int limit){
 
         String filterExpression = "continent = :val1 and country = :val2";
         DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
-                country.getCode(), Constants.CONTINENT_COUNTRY_INDEX, filterExpression, 100);
+                country.getCode(), Constants.CONTINENT_COUNTRY_INDEX, filterExpression, limit);
 
         return mapper.queryPage(spotClass, queryExpression).getResults();
     }
@@ -149,10 +154,12 @@ public class SpotService<T extends BaseSpot> {
      *          which is the center of the radius
      * @param searchRadius
      *          search radius in km
+     * @param limit
+ *              the size of the returned result list
      *
      * @return list of spots within the specifed radius
      */
-    public List<T> findByDistance(Continent continent, Position position, int searchRadius){
+    public List<T> findByDistance(Continent continent, Position position, int searchRadius, int limit){
 
         int searchRadiusMeter = searchRadius * 1000;
         List<T> spots = new LinkedList<>();
@@ -165,7 +172,7 @@ public class SpotService<T extends BaseSpot> {
             String binaryHashString = geoHash.toBinaryString();
             String filterExpression = "continent = :val1 and begins_with(geohash,:val2)";
             DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
-                    binaryHashString, Constants.CONTINENT_GEOHASH_INDEX, filterExpression, 10);
+                    binaryHashString, Constants.CONTINENT_GEOHASH_INDEX, filterExpression, limit);
             spots.addAll(mapper.queryPage(spotClass, queryExpression).getResults());
         }
 

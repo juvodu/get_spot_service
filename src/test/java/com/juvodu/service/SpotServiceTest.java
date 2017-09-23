@@ -120,7 +120,7 @@ public class SpotServiceTest {
         spotService.save(spotNA);
 
         //execute
-        List<Spot> spots = spotService.findByContinent(Continent.EU);
+        List<Spot> spots = spotService.findByContinent(Continent.EU, 1);
 
         //verify
         assertNotNull(spots);
@@ -138,7 +138,7 @@ public class SpotServiceTest {
         spotService.save(spot);
 
         //execute
-        List<Spot> spots = spotService.findByCountry(spot.getContinent(), spot.getCountry());
+        List<Spot> spots = spotService.findByCountry(spot.getContinent(), spot.getCountry(), 1);
 
         //verify
         assertNotNull(spots);
@@ -160,7 +160,7 @@ public class SpotServiceTest {
         spotService.save(spot3);
 
         //execute
-        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 1);
+        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 1, 1);
 
         //verify
         assertNotNull(spots);
@@ -183,7 +183,7 @@ public class SpotServiceTest {
         spotService.save(spot3);
 
         //execute - distance between both spots is 205km
-        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 210);
+        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 210, 2);
 
         //verify
         assertNotNull(spots);

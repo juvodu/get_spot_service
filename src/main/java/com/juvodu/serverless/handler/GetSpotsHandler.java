@@ -72,6 +72,13 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 		String lon = queryStringParametersMap.get("lon");
 		String dist = queryStringParametersMap.get("distance");
 		String country = queryStringParametersMap.get("country");
+		String limitStr = queryStringParametersMap.get("limit");
+
+		// default list size is 10
+		int limit = 10;
+		if(StringUtils.isNotBlank(limitStr)){
+			limit = Integer.parseInt(limitStr);
+		}
 
 		if(queryStringParametersMap.isEmpty()){
 
@@ -82,7 +89,7 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 
 			LOG.info("Find spots by country: " + country);
 			Locale locale = new Locale("", country);
-			spots.addAll(baseSpotService.findByCountry(Continent.valueOf(continent), new Country(locale.getCountry(), locale.getDisplayName())));
+			spots.addAll(baseSpotService.findByCountry(Continent.valueOf(continent), new Country(locale.getCountry(), locale.getDisplayName()), limit));
 
 		}else if (!StringUtils.isAnyBlank(continent, lat, lon, dist)){
 
@@ -90,12 +97,12 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 			int distance = Integer.valueOf(dist);
 			double latitude = Double.valueOf(lat);
 			double longitude = Double.valueOf(lon);
-			spots.addAll(baseSpotService.findByDistance(Continent.valueOf(continent), new Position(latitude, longitude), distance));
+			spots.addAll(baseSpotService.findByDistance(Continent.valueOf(continent), new Position(latitude, longitude), distance, limit));
 
 		}else if(StringUtils.isNotBlank(continent)){
 
 			LOG.info("Find spots by continent: " + continent);
-			spots.addAll(baseSpotService.findByContinent(Continent.valueOf(continent)));
+			spots.addAll(baseSpotService.findByContinent(Continent.valueOf(continent), limit));
 
 		}
 
