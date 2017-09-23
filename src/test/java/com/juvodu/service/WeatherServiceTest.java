@@ -25,7 +25,7 @@ public class WeatherServiceTest {
     }
 
     @Test
-    public void givenPositionWhengetForcastForPositionThenReturnForecast() throws Exception {
+    public void givenPositionWhenGetForecastForPositionThenReturnForecast() throws Exception {
 
         Forecast forecast = weatherService.getForecastForPosition(hossegor);
         assertNotNull(forecast);

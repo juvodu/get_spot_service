@@ -22,7 +22,7 @@ package:
 
 functions:
   getSpots:
-    handler: com.juvodu.serverless.handler.GetAllSpotsHandler
+    handler: com.juvodu.serverless.handler.GetSpotsHandler
     events:
       - http:
           path: spots
@@ -30,7 +30,7 @@ functions:
           cors: true
           private: true
   getSpot:
-      handler: com.juvodu.serverless.handler.GetSpotByParameterHandler
+      handler: com.juvodu.serverless.handler.GetSpotHandler
       events:
         - http:
             path: spot
