@@ -30,5 +30,4 @@ public class WeatherServiceTest {
         Forecast forecast = weatherService.getForecastForPosition(hossegor);
         assertNotNull(forecast);
     }
-
 }

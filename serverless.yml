@@ -21,6 +21,14 @@ package:
   artifact: build/distributions/spots_service.zip
 
 functions:
+  getCountries:
+    handler: com.juvodu.serverless.handler.GetCountriesHandler
+    events:
+     - http:
+          path: countries
+          method: get
+          cors: true
+          private: true
   getSpots:
     handler: com.juvodu.serverless.handler.GetSpotsHandler
     events:
