@@ -2,6 +2,7 @@ package com.juvodu.serverless;
 
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -14,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class ParameterParserTest {
 
     @Test
-    public void getOneParametersTest() throws Exception {
+    public void givenOneParameterWhenGetParametersThenSuccess() throws Exception {
 
         String testParameter = "{id=123}";
         Map<String, String> parameters = ParameterParser.getParameters(testParameter);
@@ -23,7 +24,7 @@ public class ParameterParserTest {
     }
 
     @Test
-    public void getMultipleParameters() throws Exception {
+    public void givenMultipleParametersGetParametersThenSuccess() throws Exception {
 
         String testParameter = "{continent=EU, country=FR}";
         Map<String, String> parameters = ParameterParser.getParameters(testParameter);
@@ -33,4 +34,11 @@ public class ParameterParserTest {
         assertEquals("FR", country);
     }
 
+    @Test
+    public void givenMultipleIdsWhenGetSpotIdsThenSuccess(){
+
+        String spotIdsStr = "123_456_789";
+        List<String> ids = ParameterParser.getSpotIds(spotIdsStr);
+        assertEquals(3, ids.size());
+    }
 }

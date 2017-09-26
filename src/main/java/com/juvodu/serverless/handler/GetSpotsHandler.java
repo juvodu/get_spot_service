@@ -67,6 +67,7 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 		SpotService baseSpotService = new SpotService(BaseSpot.class);
 		List<Spot> spots = new ArrayList<>();
 
+		String ids = queryStringParametersMap.get("ids");
 		String continent = queryStringParametersMap.get("continent");
 		String lat = queryStringParametersMap.get("lat");
 		String lon = queryStringParametersMap.get("lon");
@@ -84,6 +85,11 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 
 			LOG.info("Return all spots: " + country);
 			spots.addAll(baseSpotService.findAll());
+
+		}else if(!StringUtils.isBlank(ids)) {
+
+			LOG.info("Find spots by ids: " + ids);
+			spots.addAll(baseSpotService.getSpotsByIds(ParameterParser.getSpotIds(ids)));
 
 		}else if(!StringUtils.isAnyBlank(continent, country)){
 

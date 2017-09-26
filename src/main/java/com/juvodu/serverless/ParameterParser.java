@@ -2,8 +2,7 @@ package com.juvodu.serverless;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * ParameterParser used to parse URI parameters
@@ -16,6 +15,7 @@ public class ParameterParser {
      * Parse queries of request
      *
      * @param parametersStr
+     *          the parameter string to be parsed
      * @return map of parameters
      * @throws UnsupportedEncodingException
      */
@@ -28,7 +28,7 @@ public class ParameterParser {
 
         Map<String, String> query_pairs = new LinkedHashMap<>();
 
-        //api gateway converts get parameters {?continent=EU&country=FR} to JSON {continent=EU,country=FR}
+        // api gateway converts get parameters {?continent=EU&country=FR} to JSON {continent=EU,country=FR}
         String[] pairs = parametersStr.split(",");
         for(String pair :pairs){
             int idx = pair.indexOf("=");
@@ -37,5 +37,19 @@ public class ParameterParser {
                     URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
         }
         return query_pairs;
+    }
+
+    /**
+     * Parse the ids parameter
+     *
+     * @param idsStr
+     *          the string of spot ids to be parsed
+     * @return list of spot ids
+     */
+    public static List<String> getSpotIds(String idsStr){
+
+        // ids parameter format 123_456_789
+        String[] ids = idsStr.split("_");
+        return new ArrayList<>(Arrays.asList(ids));
     }
 }

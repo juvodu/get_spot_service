@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -108,6 +109,29 @@ public class SpotServiceTest {
         Spot spot_result = (Spot) spotService.getSpotById(spot.getId());
         assertEquals("Updated spot", spot_result.getName());
         assertEquals("Updated spot description", spot_result.getDescription());
+    }
+
+    @Test
+    public void given2ExistingSpotWhenGetSpotsByIdsThenSuccess(){
+
+        //setup
+        Spot spotEU = createSpot(Continent.EU, france, hossegor);
+        Spot spotNA = createSpot(Continent.NA, us, hermosa);
+        List<String> ids = new ArrayList<>();
+
+        //execute
+        spotService.save(spotEU);
+        spotService.save(spotNA);
+
+        //verify
+        ids.add(spotEU.getId());
+        ids.add(spotNA.getId());
+        List<Spot> spots = spotService.getSpotsByIds(ids);
+
+        assertEquals(2, spots.size());
+        for(Spot spot : spots){
+            assertNotNull(spot);
+        }
     }
 
     @Test

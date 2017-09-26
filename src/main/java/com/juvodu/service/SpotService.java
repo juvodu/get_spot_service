@@ -14,6 +14,7 @@ import com.juvodu.database.model.*;
 import com.juvodu.util.Constants;
 import com.juvodu.util.GeoHelper;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,6 +52,22 @@ public class SpotService<T extends BaseSpot> {
     public T getSpotById(String id){
 
         return mapper.load(spotClass, id);
+    }
+
+    /**
+     * Retrieve a list of spot by its hash keys
+     *
+     * @param ids
+     *          of the spots
+     * @return list of spots models
+     */
+    public List<T> getSpotsByIds(List<String> ids){
+
+        List<T> spots = new ArrayList<>();
+        for(String id : ids){
+            spots.add(getSpotById(id));
+        }
+        return spots;
     }
 
     /**
