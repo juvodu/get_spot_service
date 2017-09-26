@@ -3,6 +3,7 @@ service: spot-service
 provider:
   name: aws
   runtime: java8
+  timeout: 20
   stage: dev
   region: eu-central-1
   apiKeys:
