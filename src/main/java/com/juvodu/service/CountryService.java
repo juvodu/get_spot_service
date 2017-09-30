@@ -35,14 +35,14 @@ public class CountryService {
         continentCountryMap.put(Continent.AN.getCode(), Arrays.asList("AQ", "BV", "GS", "HM", "TF"));
 
         // asia
-        continentCountryMap.put(Continent.AS.getCode(), Arrays.asList("AE", "AF", "AM", "AP", "AZ", "BD", "BH", "BN",
+        continentCountryMap.put(Continent.AS.getCode(), Arrays.asList("AE", "AF", "AM", "AZ", "BD", "BH", "BN",
                 "BT", "CC", "CN", "CX", "CY", "GE", "HK", "ID", "IL", "IN", "IO", "IQ", "IR", "JO", "JP", "KG", "KH",
                 "KP", "KR", "KW", "KZ", "LA", "LB", "LK", "MM", "MN", "MO", "MV", "MY", "NP", "OM", "PH", "PK", "PS",
                 "QA", "SA", "SG", "SY", "TH", "TJ", "TL", "TM", "TW", "UZ", "VN", "YE"));
 
         // europe
         continentCountryMap.put(Continent.EU.getCode(), Arrays.asList("AD", "AL", "AT", "AX", "BA", "BE", "BG", "BY",
-                "CH", "CZ", "DE", "DK", "EE", "ES", "EU", "FI", "FO", "FR", "FX", "GB", "GG", "GI", "GR", "HR", "HU",
+                "CH", "CZ", "DE", "DK", "EE", "ES", "FI", "FO", "FR", "GB", "GG", "GI", "GR", "HR", "HU",
                 "IE", "IM", "IS", "IT", "JE", "LI", "LT", "LU", "LV", "MC", "MD", "ME", "MK", "MT", "NL", "NO", "PL",
                 "PT", "RO", "RS", "RU", "SE", "SI", "SJ", "SK", "SM", "TR", "UA", "VA"));
 
