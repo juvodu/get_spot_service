@@ -1,5 +1,6 @@
 package com.juvodu.service;
 
+import com.juvodu.database.model.Continent;
 import com.juvodu.database.model.Country;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,8 +27,7 @@ public class CountryServiceTest {
     @Test
     public void whenGetAllCountriesThenSuccess() throws Exception {
 
-        List<Country> countries = countryService.getAllCountries();
+        List<Country> countries = countryService.getCountryByContinent(Continent.EU.toString());
         assertFalse(countries.isEmpty());
     }
-
 }

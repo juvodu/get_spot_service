@@ -23,13 +23,19 @@ public class GetCountriesHandler implements RequestHandler<Map<String, Object>, 
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
+
+        String queryStringParameters = input.get("queryStringParameters").toString();
+        LOG.info("Query String parameters: " + queryStringParameters);
         int statusCode = 200;
+
         CountryService countryService = new CountryService();
         Object body;
 
         try {
 
-            body = countryService.getAllCountries();
+            Map<String, String> parameters = ParameterParser.getParameters(queryStringParameters);
+            String continent = parameters.get("continent");
+            body = countryService.getCountryByContinent(continent);
 
         } catch (Exception e) {
 
