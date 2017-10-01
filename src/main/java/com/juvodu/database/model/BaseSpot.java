@@ -26,6 +26,14 @@ public class BaseSpot {
     @DynamoDBAttribute
     private String thumbnail;
 
+    @DynamoDBAttribute
+    private String swellHeight;
+
+    @DynamoDBAttribute
+    private String swellPeriod;
+
+    @DynamoDBAttribute
+    private String windDescription;
 
     @DynamoDBTypeConverted(converter = PositionTypeConverter.class)
     @DynamoDBAttribute
@@ -67,6 +75,30 @@ public class BaseSpot {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public String getSwellHeight() {
+        return swellHeight;
+    }
+
+    public void setSwellHeight(String swellHeight) {
+        this.swellHeight = swellHeight;
+    }
+
+    public String getSwellPeriod() {
+        return swellPeriod;
+    }
+
+    public void setSwellPeriod(String swellPeriod) {
+        this.swellPeriod = swellPeriod;
+    }
+
+    public String getWindDescription() {
+        return windDescription;
+    }
+
+    public void setWindDescription(String windDescription) {
+        this.windDescription = windDescription;
     }
 
     public int getDistance() {

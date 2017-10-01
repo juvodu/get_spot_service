@@ -195,7 +195,7 @@ public class SpotService<T extends BaseSpot> {
 
         // calculate distance to each spot in km
         spots.forEach(spot -> spot.setDistance(GeoHelper.getDistance(position, spot.getPosition())/1000));
-
+        
         // fine filtering and sorting by distance
         spots = spots.stream()
                 .filter(spot -> searchRadius >= spot.getDistance())
