@@ -28,6 +28,6 @@ public class WeatherService {
      */
     public Forecast getForecastForPosition(Position position) throws WWOMClientException {
 
-        return client.getForecast(String.format("%s, %s", position.getLatitude(), position.getLongitude()));
+        return client.getForecast(String.format("%s, %s", position.getLatitude(), position.getLongitude()), true, 6, true, null);
     }
 }
