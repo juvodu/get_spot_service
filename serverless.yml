@@ -117,16 +117,16 @@ resources:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
           - IndexName: continent-crondate-index
-              KeySchema:
-                - AttributeName: continent
-                  KeyType: HASH
-                - AttributeName: cronDate
-                  KeyType: RANGE
-              Projection:
-                  ProjectionType: ALL
-              ProvisionedThroughput:
-                ReadCapacityUnits: 1
-                WriteCapacityUnits: 1
+            KeySchema:
+              - AttributeName: continent
+                KeyType: HASH
+              - AttributeName: cronDate
+                KeyType: RANGE
+            Projection:
+                ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
       DependsOn: SpotTable
