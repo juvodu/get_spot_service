@@ -9,6 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -214,6 +215,21 @@ public class SpotServiceTest {
         assertEquals(2, spots.size());
     }
 
+    @Test
+    public void givenSpotWhenFindByCronDateThenReturnSpot(){
+
+        //setup
+        Spot spot = createSpot(Continent.EU, france, hossegor);
+        spotService.save(spot);
+
+        //execute
+        List<Spot> spots = spotService.findByCronDate(Continent.EU, new Date());
+
+        //verify
+        assertNotNull(spots);
+        assertEquals(1, spots.size());
+    }
+
     /**
      * Helper function to create a spot
      *
@@ -235,6 +251,7 @@ public class SpotServiceTest {
         spotTestModel.setPosition(position);
         spotTestModel.setImage("TestImage");
         spotTestModel.setThumbnail("TestThumbnail");
+        spotTestModel.setCronDate(new Date());
 
         return spotTestModel;
     }

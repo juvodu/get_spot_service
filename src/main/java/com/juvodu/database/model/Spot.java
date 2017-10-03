@@ -6,7 +6,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.juvodu.database.converter.ContinentTypeConverter;
+import com.juvodu.database.converter.CronDateConverter;
 import com.juvodu.forecast.model.Forecast;
+
+import java.util.Date;
 
 /**
  * Model representing the complete Spot table
@@ -80,6 +83,11 @@ public class Spot extends BaseSpot{
 
     @DynamoDBAttribute
     private String weekEndCrowd;
+
+    @JsonIgnore
+    @DynamoDBAttribute // last time cron updated spot
+    @DynamoDBTypeConverted(converter = CronDateConverter.class)
+    private Date cronDate;
 
     @DynamoDBIgnore // weather information will be requested on demand
     private Forecast forecast;
@@ -257,5 +265,13 @@ public class Spot extends BaseSpot{
 
     public void setForecast(Forecast forecast) {
         this.forecast = forecast;
+    }
+
+    public Date getCronDate() {
+        return cronDate;
+    }
+
+    public void setCronDate(Date cronDate) {
+        this.cronDate = cronDate;
     }
 }

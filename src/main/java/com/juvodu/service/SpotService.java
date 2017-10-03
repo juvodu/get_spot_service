@@ -14,10 +14,9 @@ import com.juvodu.database.model.*;
 import com.juvodu.util.Constants;
 import com.juvodu.util.GeoHelper;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +29,7 @@ public class SpotService<T extends BaseSpot> {
     private final DynamoDBMapper mapper;
     private final Class<T> spotClass;
     private final DatabaseHelper<T> databaseHelper;
+    private final DateFormat dateFormat = new SimpleDateFormat(Constants.yyyyMMdd);
 
     public SpotService(Class<T> spotClass){
 
@@ -195,7 +195,7 @@ public class SpotService<T extends BaseSpot> {
 
         // calculate distance to each spot in km
         spots.forEach(spot -> spot.setDistance(GeoHelper.getDistance(position, spot.getPosition())/1000));
-        
+
         // fine filtering and sorting by distance
         spots = spots.stream()
                 .filter(spot -> searchRadius >= spot.getDistance())
@@ -203,5 +203,14 @@ public class SpotService<T extends BaseSpot> {
                 .collect(Collectors.toList());
 
         return spots;
+    }
+
+    public List<T> findByCronDate(Continent continent, Date cronDate){
+
+        String filterExpression = "continent = :val1 and cronDate = :val2";
+        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
+                dateFormat.format(cronDate), Constants.CONTINENT_CRONDATE_INDEX, filterExpression, 100);
+
+        return mapper.queryPage(spotClass, queryExpression).getResults();
     }
 }
