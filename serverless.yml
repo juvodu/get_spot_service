@@ -87,6 +87,8 @@ resources:
             AttributeType: S
           - AttributeName: geohash
             AttributeType: S
+          - AttributeName: cronDate
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
