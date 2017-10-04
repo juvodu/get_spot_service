@@ -91,8 +91,10 @@ public class SpotService<T extends BaseSpot> {
         String base32GeoHash = databaseHelper.createBinaryGeohash(spot.getPosition());
         spot.setGeohash(base32GeoHash);
 
-        // initialize cron date, spot will be populated with weather data after 24h max
-        spot.setCronDate(new Date());
+        // initialize cron date for new spots, spot will be populated with weather data after 24h max
+        if(spot.getCronDate() == null) {
+            spot.setCronDate(new Date());
+        }
 
         // save does not return, instead it populates the generated id to the passed spot instance
         mapper.save(spot);
@@ -225,6 +227,7 @@ public class SpotService<T extends BaseSpot> {
     public List<T> findByToBeUpdated(Continent continent){
 
         long oneDayAgoMilli = (new Date()).getTime() - (24L * 60L * 60L * 1000L);
+        System.out.println(oneDayAgoMilli);
         String filterExpression = "continent = :val1 and cronDate < :val2";
         DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
                 Long.toString(oneDayAgoMilli), Constants.CONTINENT_CRONDATE_INDEX, filterExpression, 100);
