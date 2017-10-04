@@ -9,6 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -216,14 +217,32 @@ public class SpotServiceTest {
     }
 
     @Test
-    public void givenSpotWhenFindByCronDateThenReturnSpot(){
+    public void givenUpdatedSpotWhenFindByCronDateThenReturnEmptyList(){
 
         //setup
         Spot spot = createSpot(Continent.EU, france, hossegor);
         spotService.save(spot);
 
         //execute
-        List<Spot> spots = spotService.findByCronDate(Continent.EU, new Date());
+        List<Spot> spots = spotService.findByToBeUpdated(Continent.EU);
+
+        //verify
+        assertNotNull(spots);
+        assertEquals(0, spots.size());
+    }
+
+    @Test
+    public void givenOutdatedSpotWhenFindByCronDateThenReturnListWithSpot(){
+
+        //setup
+        Calendar cal2DaysAgo = Calendar.getInstance();
+        cal2DaysAgo.add(Calendar.DATE, -2);
+        Spot spot = createSpot(Continent.EU, france, hossegor);
+        spot.setCronDate(cal2DaysAgo.getTime());
+        spotService.save(spot);
+
+        //execute
+        List<Spot> spots = spotService.findByToBeUpdated(Continent.EU);
 
         //verify
         assertNotNull(spots);

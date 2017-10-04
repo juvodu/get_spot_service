@@ -7,8 +7,10 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.juvodu.database.DatabaseHelper;
 import com.juvodu.database.model.*;
 import com.juvodu.util.Constants;
@@ -29,7 +31,6 @@ public class SpotService<T extends BaseSpot> {
     private final DynamoDBMapper mapper;
     private final Class<T> spotClass;
     private final DatabaseHelper<T> databaseHelper;
-    private final DateFormat dateFormat = new SimpleDateFormat(Constants.yyyyMMdd);
 
     public SpotService(Class<T> spotClass){
 
@@ -38,7 +39,13 @@ public class SpotService<T extends BaseSpot> {
         AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(Regions.EU_CENTRAL_1)
                 .build();
-        this.mapper = new DynamoDBMapper(client);
+
+        // configure dynamo DB mapper here
+        DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig.Builder()
+                .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES) // null values do not delete values
+                .build();
+
+        this.mapper = new DynamoDBMapper(client, mapperConfig);
     }
 
     /**
@@ -80,9 +87,12 @@ public class SpotService<T extends BaseSpot> {
      */
     public String save(Spot spot){
 
-        //create a geohash for each spot for fast queries based on position
+        // create a geohash for each spot for fast queries based on position
         String base32GeoHash = databaseHelper.createBinaryGeohash(spot.getPosition());
         spot.setGeohash(base32GeoHash);
+
+        // initialize cron date, spot will be populated with weather data after 24h max
+        spot.setCronDate(new Date());
 
         // save does not return, instead it populates the generated id to the passed spot instance
         mapper.save(spot);
@@ -205,11 +215,19 @@ public class SpotService<T extends BaseSpot> {
         return spots;
     }
 
-    public List<T> findByCronDate(Continent continent, Date cronDate){
+    /**
+     * Find all spots to be updated by the cron job in the specified partition
+     *
+     * @param continent
+     *              the continent in which the search takes place (partition key of continent-crondate-index table)
+     * @return list of spots to be updated
+     */
+    public List<T> findByToBeUpdated(Continent continent){
 
-        String filterExpression = "continent = :val1 and cronDate = :val2";
+        long oneDayAgoMilli = (new Date()).getTime() - (24L * 60L * 60L * 1000L);
+        String filterExpression = "continent = :val1 and cronDate < :val2";
         DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
-                dateFormat.format(cronDate), Constants.CONTINENT_CRONDATE_INDEX, filterExpression, 100);
+                Long.toString(oneDayAgoMilli), Constants.CONTINENT_CRONDATE_INDEX, filterExpression, 100);
 
         return mapper.queryPage(spotClass, queryExpression).getResults();
     }

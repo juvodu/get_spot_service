@@ -16,12 +16,10 @@ import java.util.Date;
  */
 public class CronDateConverter implements DynamoDBTypeConverter<String, Date> {
 
-    private final DateFormat dateFormat = new SimpleDateFormat(Constants.yyyyMMdd);
-
     @Override
     public String convert(Date date) {
 
-        return dateFormat.format(date);
+        return Long.toString(date.getTime());
     }
 
     @Override
@@ -30,7 +28,7 @@ public class CronDateConverter implements DynamoDBTypeConverter<String, Date> {
         Date date = null;
         try {
             if (StringUtils.isNotBlank(dateString)) {
-                date = dateFormat.parse(dateString);
+                date = new Date(Long.valueOf(dateString));
             }
         }catch (Exception e) {
             e.printStackTrace();
