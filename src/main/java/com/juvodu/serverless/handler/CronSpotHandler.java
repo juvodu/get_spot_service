@@ -33,13 +33,15 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
         LOG.info("Cron Spot Handler:" + input);
         int statusCode = 200;
 
-        SpotService spotService = new SpotService(BaseSpot.class);
+        SpotService spotService = new SpotService(Spot.class);
         WeatherService weatherService = new WeatherService();
 
         // batch size of 100 spots
         List<Spot> spots = spotService.findByToBeUpdated(Continent.EU);
 
         for(Spot spot : spots){
+
+            LOG.info("Updating spot " + spot.getId());
 
             try {
 

@@ -70,6 +70,14 @@ functions:
           method: post
           cors: true
           private: true
+  cronSpot:
+    handler: com.juvodu.serverless.handler.CronSpotHandler
+    description: Scheduled Lambda to populate spots with current surf conditions
+    timeout: 300
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+
 
 # The "Resources" your "Functions" use.  Raw AWS CloudFormation goes in here.
 resources:
