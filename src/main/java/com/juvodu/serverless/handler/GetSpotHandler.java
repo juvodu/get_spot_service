@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.juvodu.database.model.*;
 import com.juvodu.forecast.exception.WWOMClientException;
+import com.juvodu.forecast.model.Forecast;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudSpotResponse;
@@ -36,7 +37,6 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
 
         // use detailed spot class
         SpotService spotService = new SpotService(Spot.class);
-        WeatherService weatherService = new WeatherService();
         Object body;
 
         try {
@@ -45,7 +45,9 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
             String id = parameters.get("id");
 
             Spot spot = (Spot) spotService.getSpotById(id);
-            spot.setForecast(weatherService.getForecastForPosition(spot.getPosition()));
+            Forecast forecast = getForecast(spot);
+            spot.setForecast(forecast);
+
             body = spot;
 
         } catch (Exception e) {
@@ -59,5 +61,30 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
                 .setStatusCode(statusCode)
                 .setObjectBody(body)
                 .build();
+    }
+
+    /**
+     * Get forecast for the spot
+     *
+     * @param spot
+     *          for which the forecast will be retrieved
+     * @return the forecast or null if error occured
+     */
+    private Forecast getForecast(Spot spot){
+
+        WeatherService weatherService = new WeatherService();
+        Forecast forecast = null;
+
+        try {
+
+            forecast = weatherService.getForecastForPosition(spot.getPosition());
+
+        } catch (Exception e) {
+
+            LOG.warn("Error retrieving forecast for spot " + spot.getId());
+            e.printStackTrace();
+        }
+
+        return forecast;
     }
 }
