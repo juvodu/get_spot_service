@@ -76,7 +76,7 @@ functions:
     timeout: 300
     events:
       - schedule:
-          rate: rate(5 minutes)
+          rate: rate(3 hours)
 
 
 # The "Resources" your "Functions" use.  Raw AWS CloudFormation goes in here.

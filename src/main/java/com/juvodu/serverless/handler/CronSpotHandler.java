@@ -39,8 +39,9 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
         SpotService spotService = new SpotService(Spot.class);
         WeatherService weatherService = new WeatherService();
 
-        // batch size of 100 spots
+        // batch size of 200 spots
         List<Spot> spots = spotService.findByToBeUpdated(Continent.EU);
+        int updatedSpots = 0;
 
         for (Spot spot : spots) {
 
@@ -55,6 +56,7 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
                 spot.setWindDescription(hourly.getWindspeedKmph() + "Kmph from " + hourly.getWinddir16Point());
                 spot.setCronDate(new Date());
                 spotService.save(spot);
+                updatedSpots++;
 
             } catch (WWOMClientException e) {
 
@@ -66,7 +68,7 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
         long endTimeMilli = System.currentTimeMillis();
         long durationSec = (endTimeMilli - startTimeMilli)/1000;
 
-        LOG.info("Duration of cron job in seconds: " + durationSec);
+        LOG.info("Updated " + updatedSpots + " successfully. Overall duration of cron job in seconds: " + durationSec);
 
         return ApiGatewayResponse.builder()
                 .setStatusCode(statusCode)

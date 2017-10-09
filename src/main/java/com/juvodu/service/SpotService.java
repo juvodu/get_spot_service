@@ -147,7 +147,7 @@ public class SpotService<T extends BaseSpot> {
     public List<T> findByContinent(Continent continent, int limit){
 
         String filterExpression = "continent = :val1";
-        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
+        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(continent.getCode(),
                 null, Constants.CONTINENT_COUNTRY_INDEX, filterExpression, limit);
         return mapper.queryPage(spotClass, queryExpression).getResults();
     }
@@ -168,7 +168,7 @@ public class SpotService<T extends BaseSpot> {
     public List<T> findByCountry(Continent continent, Country country, int limit){
 
         String filterExpression = "continent = :val1 and country = :val2";
-        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
+        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(continent.getCode(),
                 country.getCode(), Constants.CONTINENT_COUNTRY_INDEX, filterExpression, limit);
 
         return mapper.queryPage(spotClass, queryExpression).getResults();
@@ -200,7 +200,7 @@ public class SpotService<T extends BaseSpot> {
             //rough and fast filtering by geohash
             String binaryHashString = geoHash.toBinaryString();
             String filterExpression = "continent = :val1 and begins_with(geohash,:val2)";
-            DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
+            DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(continent.getCode(),
                     binaryHashString, Constants.CONTINENT_GEOHASH_INDEX, filterExpression, limit);
             spots.addAll(mapper.queryPage(spotClass, queryExpression).getResults());
         }
@@ -228,8 +228,8 @@ public class SpotService<T extends BaseSpot> {
 
         long oneDayAgoMilli = (new Date()).getTime() - (24L * 60L * 60L * 1000L);
         String filterExpression = "continent = :val1 and cronDate < :val2";
-        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(continent.getCode(),
-                Long.toString(oneDayAgoMilli), Constants.CONTINENT_CRONDATE_INDEX, filterExpression, 100);
+        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(continent.getCode(),
+                Long.toString(oneDayAgoMilli), Constants.CONTINENT_CRONDATE_INDEX, filterExpression, 200);
 
         return mapper.queryPage(spotClass, queryExpression).getResults();
     }

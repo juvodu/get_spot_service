@@ -45,7 +45,7 @@ public class DatabaseHelper<T> {
      *
      * @return prepared query to run on dynamo db table
      */
-    public DynamoDBQueryExpression<T> createQueryExpression(String partitionKey, String sortKey, String index, String conditionExpression, int limit){
+    public DynamoDBQueryExpression<T> createIndexQueryExpression(String partitionKey, String sortKey, String index, String conditionExpression, int limit){
 
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":val1", new AttributeValue().withS(partitionKey));
