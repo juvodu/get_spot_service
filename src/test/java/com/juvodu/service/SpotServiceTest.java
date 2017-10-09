@@ -230,7 +230,11 @@ public class SpotServiceTest {
     public void givenUpdatedSpotWhenFindByCronDateThenReturnEmptyList(){
 
         //setup
+        Calendar calYesterdayPlus1Min = Calendar.getInstance();
+        calYesterdayPlus1Min.add(Calendar.HOUR, -23);
+        calYesterdayPlus1Min.add(Calendar.MINUTE, -59);
         Spot spot = createSpot(Continent.EU, france, hossegor);
+        spot.setCronDate(calYesterdayPlus1Min.getTime());
         spotService.save(spot);
 
         //execute
@@ -246,7 +250,7 @@ public class SpotServiceTest {
 
         //setup
         Calendar cal2DaysAgo = Calendar.getInstance();
-        cal2DaysAgo.add(Calendar.DATE, -10);
+        cal2DaysAgo.add(Calendar.DATE, -1);
         Spot spot = createSpot(Continent.EU, france, hossegor);
         spot.setCronDate(cal2DaysAgo.getTime());
         spotService.save(spot);
