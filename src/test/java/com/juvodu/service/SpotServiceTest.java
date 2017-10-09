@@ -45,6 +45,16 @@ public class SpotServiceTest {
     }
 
     @Test
+    public void givenSpotWithNullPositionWhenSaveThenSuccess(){
+
+        Spot spot = createSpot(Continent.NA, us, hermosa);
+        spot.setPosition(null);
+
+        //execute
+        spotService.save(spot);
+    }
+
+    @Test
     public void givenSpotWhenSaveThenSuccess(){
 
         //execute

@@ -88,8 +88,11 @@ public class SpotService<T extends BaseSpot> {
     public String save(Spot spot){
 
         // create a geohash for each spot for fast queries based on position
-        String base32GeoHash = databaseHelper.createBinaryGeohash(spot.getPosition());
-        spot.setGeohash(base32GeoHash);
+        Position position = spot.getPosition();
+        if(position != null) {
+            String base32GeoHash = databaseHelper.createBinaryGeohash(position);
+            spot.setGeohash(base32GeoHash);
+        }
 
         // initialize cron date for new spots, spot will be populated with weather data after 24h max
         if(spot.getCronDate() == null) {

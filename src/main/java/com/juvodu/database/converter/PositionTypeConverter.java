@@ -14,7 +14,12 @@ public class PositionTypeConverter implements DynamoDBTypeConverter<String, Posi
     @Override
     public String convert(Position position) {
 
-        return String.format("%s ; %s", position.getLatitude(), position.getLongitude());
+        String positionStr = null;
+        if(position != null){
+            positionStr = String.format("%s ; %s", position.getLatitude(), position.getLongitude());
+        }
+
+        return positionStr;
     }
 
     @Override

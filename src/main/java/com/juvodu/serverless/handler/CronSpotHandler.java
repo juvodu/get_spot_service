@@ -32,8 +32,6 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
         long startTimeMilli = System.currentTimeMillis();
-
-        LOG.info("Cron spot handler:" + input);
         int statusCode = 200;
 
         SpotService spotService = new SpotService(Spot.class);
@@ -41,6 +39,8 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
 
         // batch size of 200 spots
         List<Spot> spots = spotService.findByToBeUpdated(Continent.EU);
+        LOG.info("Found " + spots.size() + " spots to update.");
+
         int updatedSpots = 0;
 
         for (Spot spot : spots) {
