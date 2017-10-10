@@ -232,7 +232,7 @@ public class SpotService<T extends BaseSpot> {
         long oneDayAgoMilli = (new Date()).getTime() - (24L * 60L * 60L * 1000L);
         String filterExpression = "continent = :val1 and cronDate < :val2";
         DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(continent.getCode(),
-                Long.toString(oneDayAgoMilli), Constants.CONTINENT_CRONDATE_INDEX, filterExpression, 200);
+                Long.toString(oneDayAgoMilli), Constants.CONTINENT_CRONDATE_INDEX, filterExpression, 1000);
 
         return mapper.queryPage(spotClass, queryExpression).getResults();
     }

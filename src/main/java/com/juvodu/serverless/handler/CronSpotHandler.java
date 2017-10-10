@@ -37,7 +37,7 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
         SpotService spotService = new SpotService(Spot.class);
         WeatherService weatherService = new WeatherService();
 
-        // batch size of 200 spots
+        // batch size of 1000 spots
         List<Spot> spots = spotService.findByToBeUpdated(Continent.EU);
         LOG.info("Found " + spots.size() + " spots to update.");
 
@@ -54,8 +54,6 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
                 spot.setSwellHeight(hourly.getSwellHeightM());
                 spot.setSwellPeriod(hourly.getSwellPeriodSecs());
                 spot.setWindDescription(hourly.getWindspeedKmph() + "Kmph from " + hourly.getWinddir16Point());
-                spot.setCronDate(new Date());
-                spotService.save(spot);
                 updatedSpots++;
 
             } catch (WWOMClientException e) {
@@ -63,6 +61,9 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
                 LOG.info("Error updating spot " + spot.getId());
                 e.printStackTrace();
             }
+
+            spot.setCronDate(new Date());
+            spotService.save(spot);
         }
 
         long endTimeMilli = System.currentTimeMillis();
