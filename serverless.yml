@@ -82,6 +82,19 @@ functions:
 # The "Resources" your "Functions" use.  Raw AWS CloudFormation goes in here.
 resources:
   Resources:
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: user
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
     SpotTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -139,7 +152,9 @@ resources:
               WriteCapacityUnits: 1
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
-      DependsOn: SpotTable
+      DependsOn:
+        - SpotTable
+        - UserTable
       Properties:
         PolicyName: lambda-dynamodb
         PolicyDocument:
@@ -153,7 +168,9 @@ resources:
                 - dynamodb:UpdateItem
                 - dynamodb:Scan
                 - dynamodb:Query
-              Resource: arn:aws:dynamodb:*:*:table/spot*
+              Resource:
+                - arn:aws:dynamodb:*:*:table/spot*
+                - arn:aws:dynamodb:*:*:table/user*
         Roles:
           - Ref: IamRoleLambdaExecution
 
