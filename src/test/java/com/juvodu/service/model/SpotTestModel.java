@@ -1,4 +1,4 @@
-package com.juvodu.service;
+package com.juvodu.service.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.juvodu.database.model.Spot;

@@ -83,7 +83,7 @@ public class SpotService<T extends BaseSpot> {
      * @param spot
      *          the spot to save, if an item with the same id exists it will be updated
      *
-     * @return the generated id (UUID) of the spot item
+     * @return the generated id (UUID) of the spot
      */
     public String save(Spot spot){
 

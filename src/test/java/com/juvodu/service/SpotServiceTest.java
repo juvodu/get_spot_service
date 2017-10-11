@@ -4,6 +4,7 @@ import com.juvodu.database.model.Continent;
 import com.juvodu.database.model.Country;
 import com.juvodu.database.model.Position;
 import com.juvodu.database.model.Spot;
+import com.juvodu.service.model.SpotTestModel;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
