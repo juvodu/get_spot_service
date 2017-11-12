@@ -1,7 +1,5 @@
 package com.juvodu.service;
 
-import com.juvodu.database.model.Continent;
-import com.juvodu.database.model.Spot;
 import com.juvodu.database.model.User;
 import com.juvodu.service.model.UserTestModel;
 import org.junit.Before;
@@ -66,7 +64,7 @@ public class UserServiceTest {
         //verify
         assertNotNull(userResult);
         assertEquals(id, userResult.getId());
-        assertEquals(user.getDeviceToken(), userResult.getDeviceToken());
+        assertEquals(user.getPlatformEndpointArn(), userResult.getPlatformEndpointArn());
     }
 
     @Test
@@ -92,14 +90,14 @@ public class UserServiceTest {
         //setup
         User user = createUser();
         userService.save(user);
-        user.setDeviceToken("updated-device-token");
+        user.setPlatformEndpointArn("updated-platform-endpoint");
 
         //execute
         userService.save(user);
 
         //verify
         User userResult = userService.getUserById(user.getId());
-        assertEquals("updated-device-token", userResult.getDeviceToken());
+        assertEquals("updated-platform-endpoint", userResult.getPlatformEndpointArn());
     }
 
     /**
@@ -110,7 +108,7 @@ public class UserServiceTest {
     private User createUser(){
 
         User user = new UserTestModel();
-        user.setDeviceToken("device-token");
+        user.setPlatformEndpointArn("platform-endpoint");
         return user;
     }
 }

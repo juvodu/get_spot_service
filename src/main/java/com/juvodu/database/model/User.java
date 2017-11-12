@@ -18,7 +18,7 @@ public class User {
     private String id;
 
     @DynamoDBAttribute
-    private String deviceToken;
+    private String platformEndpointArn;
 
     public String getId() {
         return id;
@@ -28,11 +28,11 @@ public class User {
         this.id = id;
     }
 
-    public String getDeviceToken() {
-        return deviceToken;
+    public String getPlatformEndpointArn() {
+        return platformEndpointArn;
     }
 
-    public void setDeviceToken(String deviceToken) {
-        this.deviceToken = deviceToken;
+    public void setPlatformEndpointArn(String platformEndpointArn) {
+        this.platformEndpointArn = platformEndpointArn;
     }
 }
