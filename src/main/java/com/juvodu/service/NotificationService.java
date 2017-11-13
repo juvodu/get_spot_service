@@ -1,9 +1,7 @@
 package com.juvodu.service;
 
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.kms.model.NotFoundException;
 import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.*;
 import com.juvodu.database.model.User;
@@ -19,14 +17,14 @@ import java.util.regex.Pattern;
  *
  * @author Juvodu
  */
-public class NotificationService {
+public class NotificationService<T extends User> {
 
     private UserService userService;
     private AmazonSNS client;
 
-    public NotificationService(){
+    public NotificationService(UserService userService){
 
-        this.userService = new UserService(User.class);
+        this.userService = userService;
         this.client = AmazonSNSClientBuilder.standard()
                 .withRegion(Regions.EU_CENTRAL_1)
                 .build();
@@ -41,9 +39,9 @@ public class NotificationService {
      * @param deviceToken
      *              retrieved from the mobile operating system
      */
-    public void registerWithSNS(String userId, String deviceToken) {
+    public void registerDeviceForPushNotification(String userId, String deviceToken) {
 
-        String endpointArn = retrieveEndpointArn(userId);
+        String endpointArn = userService.retrieveEndpointArnByUserId(userId);
 
         boolean updateNeeded = false;
         boolean createNeeded = (null == endpointArn);
@@ -119,27 +117,7 @@ public class NotificationService {
                 throw ipe;
             }
         }
-        storeEndpointArn(endpointArn, userId);
+        userService.storeEndpointArn(userId, endpointArn);
         return endpointArn;
-    }
-
-    /**
-     * @return the ARN the app was registered under previously, or null if no
-     *         platform endpoint ARN is stored.
-     */
-    private String retrieveEndpointArn(String userId) {
-
-        User user = userService.getUserById(userId);
-        return user.getPlatformEndpointArn();
-    }
-
-    /**
-     * Stores the platform endpoint ARN in permanent storage for lookup next time.
-     */
-    private void storeEndpointArn(String endpointArn, String userId) {
-
-        User user = userService.getUserById(userId);
-        user.setPlatformEndpointArn(endpointArn);
-        userService.save(user);
     }
 }

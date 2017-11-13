@@ -10,7 +10,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
  *
  * @author Juvodu
  */
-@DynamoDBTable(tableName = "spot")
+@DynamoDBTable(tableName = "user")
 public class User {
 
     @DynamoDBHashKey

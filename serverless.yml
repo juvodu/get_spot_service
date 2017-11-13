@@ -16,6 +16,13 @@ provider:
     throttle:
       burstLimit: 200
       rateLimit: 100
+  iamRoleStatements:
+  -  Effect: "Allow"
+     Action:
+       - "SNS:GetEndpointAttributes"
+       - "SNS:CreatePlatformEndpoint"
+     Resource:
+       - arn:aws:sns:*:*:app/GCM/LetMeGoAndroid
 
 # you can add packaging information here
 package:
@@ -70,6 +77,14 @@ functions:
           method: post
           cors: true
           private: true
+  registerPush:
+    handler: com.juvodu.serverless.handler.RegisterPushHandler
+    events:
+      - http:
+          path: device/update
+          method: post
+          cors: true
+          private: true
   cronSpot:
     handler: com.juvodu.serverless.handler.CronSpotHandler
     description: Scheduled Lambda to populate spots with current surf conditions
@@ -77,7 +92,6 @@ functions:
     events:
       - schedule:
           rate: rate(3 hours)
-
 
 # The "Resources" your "Functions" use.  Raw AWS CloudFormation goes in here.
 resources:

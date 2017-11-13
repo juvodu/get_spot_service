@@ -57,7 +57,7 @@ public class UserService<T extends User> {
      *
      * @return the generated id (UUID) of the user
      */
-    public String save(T user){
+    public String save(User user){
 
         // save does not return, instead it populates the generated id to the passed spot instance
         mapper.save(user);
@@ -95,5 +95,35 @@ public class UserService<T extends User> {
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
         return mapper.scan(userClass, scanExpression);
+    }
+
+    /**
+     * @return the ARN the app was registered under previously, or null if no
+     *         platform endpoint ARN is stored.
+     */
+    public String retrieveEndpointArnByUserId(String userId) {
+
+        String arn = null;
+        User user = getUserById(userId);
+        if(user != null){
+            arn = user.getPlatformEndpointArn();
+        }
+
+        return arn;
+    }
+
+    /**
+     * Stores the platform endpoint ARN in permanent storage for lookup next time.
+     */
+    public void storeEndpointArn(String userId, String endpointArn) {
+
+        try {
+            User user = userClass.newInstance();
+            user.setId(userId);
+            user.setPlatformEndpointArn(endpointArn);
+            save(user);
+        } catch (InstantiationException | IllegalAccessException  e) {
+            e.printStackTrace();
+        }
     }
 }
