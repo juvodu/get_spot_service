@@ -48,11 +48,9 @@ public class NotificationServiceTest {
     public void givenNonExistingUserIdAndDeviceTokenWhenRegisterDeviceForPushNotificationThenUpdate(){
 
         // setup
-        String arn = Constants.SNS_APPLICATION_ARN.replace("app", "endpoint") + "/217f658e-e141-3d63-8209-35d76abb5fba";
-        User user = new UserTestModel();
-        user.setId(USERNAME);
-        user.setPlatformEndpointArn(arn);
+        User user = createUser();
         userService.save(user);
+        String arn = user.getPlatformEndpointArn();
 
         // execute
         notificationService.registerDeviceForPushNotification(USERNAME, "456");
@@ -60,5 +58,34 @@ public class NotificationServiceTest {
         // verify
         user = userService.getUserById(USERNAME);
         assertFalse(arn.equalsIgnoreCase(user.getPlatformEndpointArn()));
+    }
+
+    @Test
+    public void givenEndpointArnWhenPushNotificationThenReturnMessageId(){
+
+        // setup
+        User user = createUser();
+        userService.save(user);
+        notificationService.registerDeviceForPushNotification(USERNAME, "456");
+
+        // execute
+        String messageId = notificationService.pushNotification(user.getPlatformEndpointArn(), "unit-subject", "unit-message");
+
+        // verify
+        assertNotNull(messageId);
+    }
+
+    /**
+     * Helper function to create a user
+     *
+     * @return test  user
+     */
+    private User createUser(){
+
+        String arn = Constants.SNS_APPLICATION_ARN.replace("app", "endpoint") + "/ec5706bf-5b62-373b-bae0-88f260af3012";
+        User user = new UserTestModel();
+        user.setId(USERNAME);
+        user.setPlatformEndpointArn(arn);
+        return user;
     }
 }

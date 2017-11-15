@@ -6,6 +6,7 @@ import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.*;
 import com.juvodu.database.model.User;
 import com.juvodu.util.Constants;
+import com.sun.javafx.binding.StringFormatter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -119,5 +120,30 @@ public class NotificationService<T extends User> {
         }
         userService.storeEndpointArn(userId, endpointArn);
         return endpointArn;
+    }
+
+    /**
+     * Publish a message to a endpoint arn (a single mobile device)
+     *
+     * @param endpointArn
+     *              of the mobile device
+     * @param subject
+     *              subject of the notification
+     * @param messageText
+     *              the message text
+     *
+     * @return id of the created message or null if failure
+     */
+    public String pushNotification(String endpointArn, String subject, String messageText){
+
+        String messageContainer = "{ 'GCM': { 'data': { 'message': '%s' } }";
+        String message = String.format(messageContainer, messageText);
+
+        PublishRequest publishRequest = new PublishRequest();
+        publishRequest.setTargetArn(endpointArn);
+        publishRequest.setSubject(subject);
+        publishRequest.setMessage(message);
+        PublishResult publishResult = client.publish(publishRequest);
+        return publishResult.getMessageId();
     }
 }
