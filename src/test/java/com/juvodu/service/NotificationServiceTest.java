@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.UUID;
+
 import static org.junit.Assert.*;
 
 /**
@@ -34,10 +36,13 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void givenNonExistingUserIdAndDeviceTokenWhenRegisterDeviceForPushNotificationThenCreate(){
+    public void givenNoArnAndNoEndpointWhenRegisterDeviceForPushNotificationThenCreateEndpoint(){
+
+        // setup
+        String deviceToken = UUID.randomUUID().toString();
 
         // execute
-        notificationService.registerDeviceForPushNotification(USERNAME, "123");
+        notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
 
         // verify
         User user = userService.getUserById(USERNAME);
@@ -45,28 +50,32 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void givenNonExistingUserIdAndDeviceTokenWhenRegisterDeviceForPushNotificationThenUpdate(){
+    public void givenArnWithoutEndpointWhenRegisterDeviceForPushNotificationThenCreateNewEndpointWithNewArn(){
 
         // setup
+        String arn = Constants.SNS_APPLICATION_ARN.replace("app", "endpoint") + "/" + UUID.randomUUID();
+        String deviceToken = UUID.randomUUID().toString();
         User user = createUser();
+        user.setPlatformEndpointArn(arn);
         userService.save(user);
-        String arn = user.getPlatformEndpointArn();
 
         // execute
-        notificationService.registerDeviceForPushNotification(USERNAME, "456");
+        notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
 
         // verify
         user = userService.getUserById(USERNAME);
-        assertFalse(arn.equalsIgnoreCase(user.getPlatformEndpointArn()));
+        assertFalse(arn.equals(user.getPlatformEndpointArn()));
     }
 
     @Test
     public void givenEndpointArnWhenPushNotificationThenReturnMessageId(){
 
         // setup
+        String deviceToken = UUID.randomUUID().toString();
         User user = createUser();
-        userService.save(user);
-        notificationService.registerDeviceForPushNotification(USERNAME, "456");
+        String userId = userService.save(user);
+        notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
+        user = userService.getUserById(userId);
 
         // execute
         String messageId = notificationService.pushNotification(user.getPlatformEndpointArn(), "unit-subject", "unit-message");
@@ -82,10 +91,8 @@ public class NotificationServiceTest {
      */
     private User createUser(){
 
-        String arn = Constants.SNS_APPLICATION_ARN.replace("app", "endpoint") + "/ec5706bf-5b62-373b-bae0-88f260af3012";
         User user = new UserTestModel();
         user.setId(USERNAME);
-        user.setPlatformEndpointArn(arn);
         return user;
     }
 }
