@@ -4,9 +4,13 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.juvodu.database.model.Platform;
 import com.juvodu.database.model.User;
 import com.juvodu.util.Constants;
+import com.juvodu.util.JsonHelper;
 import com.sun.javafx.binding.StringFormatter;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -125,6 +129,8 @@ public class NotificationService<T extends User> {
     /**
      * Publish a message to a endpoint arn (a single mobile device)
      *
+     * @param platform
+     *              of the mobile device, currently only android supported
      * @param endpointArn
      *              of the mobile device
      * @param subject
@@ -134,16 +140,63 @@ public class NotificationService<T extends User> {
      *
      * @return id of the created message or null if failure
      */
-    public String pushNotification(String endpointArn, String subject, String messageText){
-
-        String messageContainer = "{ 'GCM': { 'data': { 'message': '%s' } }";
-        String message = String.format(messageContainer, messageText);
+    public String pushNotification(Platform platform, String endpointArn, String subject, String messageText){
 
         PublishRequest publishRequest = new PublishRequest();
+        publishRequest.setMessageStructure("json");
+
+        Map<String, String> messageMap = new HashMap<>();
+
+        String message = null;
+        switch (platform){
+            case GCM:
+                message = getAndroidMessageBody(subject, messageText);
+                break;
+            default:
+                throw new IllegalArgumentException("Platform not supported : "
+                        + platform.name());
+        }
+
+        messageMap.put(platform.name(), message);
+        message = JsonHelper.jsonify(messageMap);
+
         publishRequest.setTargetArn(endpointArn);
-        publishRequest.setSubject(subject);
         publishRequest.setMessage(message);
+
         PublishResult publishResult = client.publish(publishRequest);
         return publishResult.getMessageId();
+    }
+
+    /**
+     * Creates a message JSON structure for android devices and sets the attributes of the push notification
+     *
+     * @param subject
+     *            the subject used for the notification
+     * @param messageText
+     *            the message text used for the notification
+     *
+     * @return the populated JSON message
+     */
+    private String getAndroidMessageBody(String subject, String messageText) {
+
+        Map<String, Object> androidMessageMap = new HashMap<>();
+        androidMessageMap.put("collapse_key", subject);
+        androidMessageMap.put("data", getData(messageText));
+        androidMessageMap.put("delay_while_idle", true);
+        androidMessageMap.put("time_to_live", 500);
+        androidMessageMap.put("dry_run", false);
+        return JsonHelper.jsonify(androidMessageMap);
+    }
+
+    /**
+     * Set platform independent the message text parameter
+     * @param messageText
+     *              to set
+     * @return the message as a JSON parameter
+     */
+    private Map<String, String> getData(String messageText) {
+        Map<String, String> payload = new HashMap<>();
+        payload.put("message", messageText);
+        return payload;
     }
 }

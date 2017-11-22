@@ -1,5 +1,6 @@
 package com.juvodu.service;
 
+import com.juvodu.database.model.Platform;
 import com.juvodu.database.model.User;
 import com.juvodu.service.model.UserTestModel;
 import com.juvodu.util.Constants;
@@ -78,7 +79,7 @@ public class NotificationServiceTest {
         user = userService.getUserById(userId);
 
         // execute
-        String messageId = notificationService.pushNotification(user.getPlatformEndpointArn(), "unit-subject", "unit-message");
+        String messageId = notificationService.pushNotification(Platform.GCM, user.getPlatformEndpointArn(), "unit-subject", "unit-message");
 
         // verify
         assertNotNull(messageId);
