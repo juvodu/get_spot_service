@@ -10,14 +10,25 @@ import com.juvodu.database.model.Spot;
 public class SwellAlertService {
 
 
+    /**
+     * Checks spot for certain conditions and returns true if met
+     *
+     * @param spot to be checked for swell conditions
+     * @return true if surf conditions met
+     */
     public boolean checkSwellAlertForSpot(Spot spot){
 
         float swellHeight = Float.parseFloat(spot.getSwellHeight());
         float swellPeriod = Float.parseFloat(spot.getSwellPeriod());
         float windspeedKmph = Float.parseFloat(spot.getWindspeedKmph());
-        float windDir16Point = Float.parseFloat(spot.getWinddir16Point());
+        String windDir16Point = spot.getWinddir16Point();
 
-        // TODO: evalute swell condition, if alert required return true
-        return true;
+        // TODO: swell rating by user preferences and spot properties incl. wind dir
+        boolean isAlert = false;
+        if (swellHeight > 1 && swellPeriod > 10 && windspeedKmph < 20) {
+            isAlert = true;
+        }
+
+        return isAlert;
     }
 }
