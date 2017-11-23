@@ -33,7 +33,10 @@ public class BaseSpot {
     private String swellPeriod;
 
     @DynamoDBAttribute
-    private String windDescription;
+    private String windspeedKmph;
+
+    @DynamoDBAttribute
+    private String winddir16Point;
 
     @DynamoDBTypeConverted(converter = PositionTypeConverter.class)
     @DynamoDBAttribute
@@ -118,11 +121,19 @@ public class BaseSpot {
         this.swellPeriod = swellPeriod;
     }
 
-    public String getWindDescription() {
-        return windDescription;
+    public String getWindspeedKmph() {
+        return windspeedKmph;
     }
 
-    public void setWindDescription(String windDescription) {
-        this.windDescription = windDescription;
+    public void setWindspeedKmph(String windspeedKmph) {
+        this.windspeedKmph = windspeedKmph;
+    }
+
+    public String getWinddir16Point() {
+        return winddir16Point;
+    }
+
+    public void setWinddir16Point(String winddir16Point) {
+        this.winddir16Point = winddir16Point;
     }
 }

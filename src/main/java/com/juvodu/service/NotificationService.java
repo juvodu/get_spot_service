@@ -4,13 +4,10 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.juvodu.database.model.Platform;
 import com.juvodu.database.model.User;
 import com.juvodu.util.Constants;
 import com.juvodu.util.JsonHelper;
-import com.sun.javafx.binding.StringFormatter;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 
 import java.util.HashMap;
 import java.util.Map;

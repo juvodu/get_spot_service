@@ -53,7 +53,8 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
                 Hourly hourly = getLatestHourly(forecast);
                 spot.setSwellHeight(hourly.getSwellHeightM());
                 spot.setSwellPeriod(hourly.getSwellPeriodSecs());
-                spot.setWindDescription(hourly.getWindspeedKmph() + "Kmph from " + hourly.getWinddir16Point());
+                spot.setWindspeedKmph(hourly.getWindspeedKmph());
+                spot.setWinddir16Point(hourly.getWinddir16Point());
                 updatedSpots++;
 
             } catch (WWOMClientException e) {
