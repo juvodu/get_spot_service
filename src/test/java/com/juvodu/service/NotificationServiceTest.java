@@ -85,6 +85,11 @@ public class NotificationServiceTest {
         assertNotNull(messageId);
     }
 
+    @Test
+    public void test(){
+        String messageId = notificationService.pushNotification(Platform.GCM,"arn:aws:sns:eu-central-1:980738030415:endpoint/GCM/LetMeGoAndroid/217f658e-e141-3d63-8209-35d76abb5fba", "unit-subject", "unit-message");
+    }
+
     /**
      * Helper function to create a user
      *

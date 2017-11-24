@@ -5,9 +5,11 @@ import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.*;
 import com.juvodu.database.model.Platform;
+import com.juvodu.database.model.Spot;
 import com.juvodu.database.model.User;
 import com.juvodu.util.Constants;
 import com.juvodu.util.JsonHelper;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,12 +24,12 @@ import java.util.regex.Pattern;
 public class NotificationService<T extends User> {
 
     private UserService userService;
-    private AmazonSNS client;
+    private AmazonSNS snsClient;
 
     public NotificationService(UserService userService){
 
         this.userService = userService;
-        this.client = AmazonSNSClientBuilder.standard()
+        this.snsClient = AmazonSNSClientBuilder.standard()
                 .withRegion(Regions.EU_CENTRAL_1)
                 .build();
     }
@@ -58,7 +60,7 @@ public class NotificationService<T extends User> {
         // it was just created.
         try {
             GetEndpointAttributesRequest geaReq = new GetEndpointAttributesRequest().withEndpointArn(endpointArn);
-            GetEndpointAttributesResult geaRes = client.getEndpointAttributes(geaReq);
+            GetEndpointAttributesResult geaRes = snsClient.getEndpointAttributes(geaReq);
 
             updateNeeded = !geaRes.getAttributes().get("Token").equals(deviceToken)
                     || !geaRes.getAttributes().get("Enabled").equalsIgnoreCase("true");
@@ -81,7 +83,7 @@ public class NotificationService<T extends User> {
             attribs.put("Token", deviceToken);
             attribs.put("Enabled", "true");
             SetEndpointAttributesRequest saeReq = new SetEndpointAttributesRequest().withEndpointArn(endpointArn).withAttributes(attribs);
-            client.setEndpointAttributes(saeReq);
+            snsClient.setEndpointAttributes(saeReq);
         }
     }
 
@@ -98,7 +100,7 @@ public class NotificationService<T extends User> {
             CreatePlatformEndpointRequest cpeReq = new CreatePlatformEndpointRequest()
                             .withPlatformApplicationArn(Constants.SNS_APPLICATION_ARN)
                             .withToken(deviceToken);
-            CreatePlatformEndpointResult cpeRes = client.createPlatformEndpoint(cpeReq);
+            CreatePlatformEndpointResult cpeRes = snsClient.createPlatformEndpoint(cpeReq);
             endpointArn = cpeRes.getEndpointArn();
 
         } catch (InvalidParameterException ipe) {
@@ -121,6 +123,50 @@ public class NotificationService<T extends User> {
         }
         userService.storeEndpointArn(userId, endpointArn);
         return endpointArn;
+    }
+
+    /**
+     * Create a topic for publish/subscribe mechanism
+     *
+     * @param topicName
+     *           of the topic to be created - needs to be unique
+     * @return arn of the created topic
+     */
+    public String createTopic(String topicName){
+
+        CreateTopicRequest createTopicRequest = new CreateTopicRequest(topicName);
+        CreateTopicResult createTopicResult = snsClient.createTopic(createTopicRequest);
+        return createTopicResult.getTopicArn();
+    }
+
+    /**
+     * Subscribes an endpoint to a topic
+     *
+     * @param topicArn
+     *            of the topic to be subscribed to
+     * @param endpointArn
+     *             to receive notifications
+     */
+    public void subscribeToTopic(String topicArn, String endpointArn){
+
+        SubscribeRequest subscribeRequest = new SubscribeRequest(topicArn, "application", endpointArn);
+        snsClient.subscribe(subscribeRequest);
+    }
+
+    /**
+     * Notify subscribers of spot conditions
+     *
+     * @param spot
+     *          to which users have subscribed
+     */
+    public void swellAlert(Spot spot){
+
+        String topicArn = spot.getTopicArn();
+
+        // push message to topic
+        if(StringUtils.isNotBlank(topicArn)) {
+            pushNotification(Platform.GCM, topicArn, "Nice swell alert!", "Dude, its on @ " + spot.getName());
+        }
     }
 
     /**
@@ -160,7 +206,7 @@ public class NotificationService<T extends User> {
         publishRequest.setTargetArn(endpointArn);
         publishRequest.setMessage(message);
 
-        PublishResult publishResult = client.publish(publishRequest);
+        PublishResult publishResult = snsClient.publish(publishRequest);
         return publishResult.getMessageId();
     }
 

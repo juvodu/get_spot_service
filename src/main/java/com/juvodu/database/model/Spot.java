@@ -92,6 +92,9 @@ public class Spot extends BaseSpot{
     @DynamoDBIgnore // weather information will be requested on demand
     private Forecast forecast;
 
+    @DynamoDBAttribute
+    private String topicArn;
+
     public String getDescription() {
         return description;
     }
@@ -273,5 +276,13 @@ public class Spot extends BaseSpot{
 
     public void setCronDate(Date cronDate) {
         this.cronDate = cronDate;
+    }
+
+    public String getTopicArn() {
+        return topicArn;
+    }
+
+    public void setTopicArn(String topicArn) {
+        this.topicArn = topicArn;
     }
 }
