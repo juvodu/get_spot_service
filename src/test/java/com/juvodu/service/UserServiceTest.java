@@ -19,12 +19,12 @@ import static org.junit.Assert.assertNotNull;
 public class UserServiceTest {
 
     // instantiate with test model to ensure persisting all data to the test table "user_test"
-    private static UserService userService;
+    private static UserService<UserTestModel> userService;
 
     @BeforeClass
     public static void beforeClass(){
 
-        userService = new UserService(UserTestModel.class);
+        userService = new UserService<>(UserTestModel.class);
     }
 
     @Before
@@ -44,7 +44,7 @@ public class UserServiceTest {
     public void givenSavedUserWhenDeleteThenSuccess(){
 
         //setup
-        User user = createUser();
+        UserTestModel user = createUser();
         userService.save(user);
 
         //execute
@@ -55,11 +55,12 @@ public class UserServiceTest {
     public void givenSavedUserWhenGetUserByIdThenReturnUser(){
 
         //setup
-        User user = createUser();
-        String id = userService.save(user);
+        UserTestModel user = createUser();
+        userService.save(user);
+        String id = user.getId();
 
-        //execute
-        User userResult = userService.getUserById(id);
+                //execute
+        User userResult = userService.getById(id);
 
         //verify
         assertNotNull(userResult);
@@ -71,13 +72,13 @@ public class UserServiceTest {
     public void given2SavedUsersWhenGetAllUsersThenReturnBoth(){
 
         //setup
-        User user1 = createUser();
-        User user2 = createUser();
+        UserTestModel user1 = createUser();
+        UserTestModel user2 = createUser();
         userService.save(user1);
         userService.save(user2);
 
         //execute
-        List<User> allUsers = userService.findAll();
+        List<UserTestModel> allUsers = userService.findAll();
 
         //verify
         assertNotNull(allUsers);
@@ -88,7 +89,7 @@ public class UserServiceTest {
     public void givenExistingSpotWhenUpdateThenSuccess(){
 
         //setup
-        User user = createUser();
+        UserTestModel user = createUser();
         userService.save(user);
         user.setPlatformEndpointArn("updated-platform-endpoint");
 
@@ -96,7 +97,7 @@ public class UserServiceTest {
         userService.save(user);
 
         //verify
-        User userResult = userService.getUserById(user.getId());
+        User userResult = (User) userService.getById(user.getId());
         assertEquals("updated-platform-endpoint", userResult.getPlatformEndpointArn());
     }
 
@@ -105,9 +106,9 @@ public class UserServiceTest {
      *
      * @return the created instance of the user
      */
-    private User createUser(){
+    private UserTestModel createUser(){
 
-        User user = new UserTestModel();
+        UserTestModel user = new UserTestModel();
         user.setPlatformEndpointArn("platform-endpoint");
         return user;
     }

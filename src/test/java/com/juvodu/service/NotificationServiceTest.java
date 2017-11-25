@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 public class NotificationServiceTest {
 
     private static NotificationService notificationService;
-    private static UserService userService;
+    private static UserService<UserTestModel> userService;
     private static String USERNAME = "juvodu";
 
 
@@ -46,7 +46,7 @@ public class NotificationServiceTest {
         notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
 
         // verify
-        User user = userService.getUserById(USERNAME);
+        User user = userService.getById(USERNAME);
         assertNotNull(user.getPlatformEndpointArn());
     }
 
@@ -56,7 +56,7 @@ public class NotificationServiceTest {
         // setup
         String arn = Constants.SNS_APPLICATION_ARN.replace("app", "endpoint") + "/" + UUID.randomUUID();
         String deviceToken = UUID.randomUUID().toString();
-        User user = createUser();
+        UserTestModel user = createUser();
         user.setPlatformEndpointArn(arn);
         userService.save(user);
 
@@ -64,7 +64,7 @@ public class NotificationServiceTest {
         notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
 
         // verify
-        user = userService.getUserById(USERNAME);
+        user = userService.getById(USERNAME);
         assertFalse(arn.equals(user.getPlatformEndpointArn()));
     }
 
@@ -73,10 +73,11 @@ public class NotificationServiceTest {
 
         // setup
         String deviceToken = UUID.randomUUID().toString();
-        User user = createUser();
-        String userId = userService.save(user);
+        UserTestModel user = createUser();
+        userService.save(user);
+        String userId = user.getId();
         notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
-        user = userService.getUserById(userId);
+        user = userService.getById(userId);
 
         // execute
         String messageId = notificationService.pushNotification(Platform.GCM, user.getPlatformEndpointArn(), "unit-subject", "unit-message");
@@ -95,9 +96,9 @@ public class NotificationServiceTest {
      *
      * @return test  user
      */
-    private User createUser(){
+    private UserTestModel createUser(){
 
-        User user = new UserTestModel();
+        UserTestModel user = new UserTestModel();
         user.setId(USERNAME);
         return user;
     }

@@ -32,4 +32,9 @@ public class FavoriteService<T extends Favorite> {
                 .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE).build();
         this.mapper = new DynamoDBMapper(dynamoDB, mapperConfig);
     }
+
+    public void getFavorite(String userId, String spotId){
+
+        mapper.load(favoriteClass, userId);
+    }
 }
