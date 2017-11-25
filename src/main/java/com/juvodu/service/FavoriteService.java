@@ -1,9 +1,6 @@
 package com.juvodu.service;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.juvodu.database.DatabaseHelper;
 import com.juvodu.database.model.Favorite;
 
 /**
@@ -11,30 +8,16 @@ import com.juvodu.database.model.Favorite;
  *
  * @author Juvodu
  */
-public class FavoriteService<T extends Favorite> {
-
-    private final DynamoDBMapper mapper;
-    private final Class<T> favoriteClass;
+public class FavoriteService<T extends Favorite> extends GenericPersistenceService<T>{
 
     /**
      * Ctor
      *
-     * @param favoriteClass
+     * @param persistenceClass
      *              defines model service works with to vary between dev and prod databases
      */
-    public FavoriteService(Class<T> favoriteClass){
+    public FavoriteService(Class<T> persistenceClass){
 
-        this.favoriteClass = favoriteClass;
-        AmazonDynamoDB dynamoDB = DatabaseHelper.getDynamoDB();
-
-        // configure dynamo DB mapper here
-        DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig.Builder()
-                .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE).build();
-        this.mapper = new DynamoDBMapper(dynamoDB, mapperConfig);
-    }
-
-    public void getFavorite(String userId, String spotId){
-
-        mapper.load(favoriteClass, userId);
+        super(persistenceClass, DynamoDBMapperConfig.SaveBehavior.UPDATE);
     }
 }

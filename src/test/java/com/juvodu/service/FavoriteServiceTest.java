@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static junit.framework.Assert.assertEquals;
+
 /**
  * Test suite for the FavoriteService
  *
@@ -42,13 +44,15 @@ public class FavoriteServiceTest {
         SpotTestModel spot = new SpotTestModel();
         spotService.save(spot);
         FavoriteTestModel favorite = new FavoriteTestModel();
-        favorite.setUsedId(user.getId());
+        favorite.setUserId(user.getId());
         favorite.setSpotId(spot.getId());
         favoriteService.save(favorite);
 
         // execute
-        FavoriteTestModel fav = favoriteService.getByCompositeKey(favorite.getUsedId(), favorite.getSpotId());
+        FavoriteTestModel fav = favoriteService.getByCompositeKey(favorite.getUserId(), favorite.getSpotId());
 
         // verify
+        assertEquals(user.getId(), fav.getUserId());
+        assertEquals(spot.getId(), fav.getSpotId());
     }
 }
