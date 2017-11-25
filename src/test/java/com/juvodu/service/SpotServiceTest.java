@@ -4,7 +4,7 @@ import com.juvodu.database.model.Continent;
 import com.juvodu.database.model.Country;
 import com.juvodu.database.model.Position;
 import com.juvodu.database.model.Spot;
-import com.juvodu.service.model.SpotTestModel;
+import com.juvodu.service.testmodel.SpotTestModel;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public class SpotServiceTest {
 
-    // model which takes ensures persisting all data to the test table "spot_test"
+    // testmodel which takes ensures persisting all data to the test table "spot_test"
     private static SpotService spotService;
     private final Country france = new Country("FR", "France");
     private final Country us =  new Country("US", "United States");

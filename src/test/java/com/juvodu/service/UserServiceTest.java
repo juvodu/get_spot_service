@@ -1,7 +1,7 @@
 package com.juvodu.service;
 
 import com.juvodu.database.model.User;
-import com.juvodu.service.model.UserTestModel;
+import com.juvodu.service.testmodel.UserTestModel;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

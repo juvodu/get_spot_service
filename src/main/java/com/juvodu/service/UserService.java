@@ -1,12 +1,10 @@
 package com.juvodu.service;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
-import com.juvodu.database.model.BaseSpot;
+import com.juvodu.database.DatabaseHelper;
 import com.juvodu.database.model.User;
 
 import java.util.List;
@@ -24,16 +22,14 @@ public class UserService<T extends User> {
     public UserService(Class<T> userClass){
 
         this.userClass = userClass;
-        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(Regions.EU_CENTRAL_1)
-                .build();
+        AmazonDynamoDB dynamoDB = DatabaseHelper.getDynamoDB();
 
         // configure dynamo DB mapper here
         DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig.Builder()
                 .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE)
                 .build();
 
-        this.mapper = new DynamoDBMapper(client, mapperConfig);
+        this.mapper = new DynamoDBMapper(dynamoDB, mapperConfig);
     }
 
     /**
@@ -42,7 +38,7 @@ public class UserService<T extends User> {
      * @param id
      *          of the user
      *
-     * @return the user model populated with data
+     * @return the user testmodel populated with data
      */
     public T getUserById(String id){
 

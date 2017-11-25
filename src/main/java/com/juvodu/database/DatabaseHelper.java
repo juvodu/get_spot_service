@@ -1,6 +1,9 @@
 package com.juvodu.database;
 
 import ch.hsr.geohash.GeoHash;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.juvodu.database.model.Position;
@@ -16,6 +19,17 @@ import java.util.Map;
 public class DatabaseHelper<T> {
 
     /**
+     * Get the dynamo db client, situated in eu_central_1 (frankfurt) region
+     * @return
+     */
+    public static AmazonDynamoDB getDynamoDB(){
+
+        return AmazonDynamoDBClientBuilder.standard()
+                .withRegion(Regions.EU_CENTRAL_1)
+                .build();
+    }
+
+    /**
      * Creates a binary geohash for the position
      *
      * @param position
@@ -23,7 +37,7 @@ public class DatabaseHelper<T> {
      *
      * @return binary geohash as a string
      */
-    public String createBinaryGeohash(Position position){
+    public static String createBinaryGeohash(Position position){
 
         GeoHash geoHash = GeoHash.withBitPrecision(position.getLatitude(), position.getLongitude(), 64);
         return geoHash.toBinaryString();

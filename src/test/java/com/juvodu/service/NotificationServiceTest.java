@@ -2,7 +2,7 @@ package com.juvodu.service;
 
 import com.juvodu.database.model.Platform;
 import com.juvodu.database.model.User;
-import com.juvodu.service.model.UserTestModel;
+import com.juvodu.service.testmodel.UserTestModel;
 import com.juvodu.util.Constants;
 import org.junit.Before;
 import org.junit.BeforeClass;

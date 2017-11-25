@@ -3,21 +3,16 @@ package com.juvodu.service;
 import ch.hsr.geohash.GeoHash;
 import ch.hsr.geohash.WGS84Point;
 import ch.hsr.geohash.queries.GeoHashCircleQuery;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
-import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.juvodu.database.DatabaseHelper;
 import com.juvodu.database.model.*;
 import com.juvodu.util.Constants;
 import com.juvodu.util.GeoHelper;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,16 +31,14 @@ public class SpotService<T extends BaseSpot> {
 
         this.spotClass = spotClass;
         this.databaseHelper = new DatabaseHelper<>();
-        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(Regions.EU_CENTRAL_1)
-                .build();
+        AmazonDynamoDB dynamoDB = DatabaseHelper.getDynamoDB();
 
         // configure dynamo DB mapper here
         DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig.Builder()
                 .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES) // null values do not delete values
                 .build();
 
-        this.mapper = new DynamoDBMapper(client, mapperConfig);
+        this.mapper = new DynamoDBMapper(dynamoDB, mapperConfig);
     }
 
     /**
@@ -54,7 +47,7 @@ public class SpotService<T extends BaseSpot> {
      * @param id
      *          of the spot
      *
-     * @return the spot model populated with data
+     * @return the spot testmodel populated with data
      */
     public T getSpotById(String id){
 
@@ -90,7 +83,7 @@ public class SpotService<T extends BaseSpot> {
         // create a geohash for each spot for fast queries based on position
         Position position = spot.getPosition();
         if(position != null) {
-            String base32GeoHash = databaseHelper.createBinaryGeohash(position);
+            String base32GeoHash = DatabaseHelper.createBinaryGeohash(position);
             spot.setGeohash(base32GeoHash);
         }
 
