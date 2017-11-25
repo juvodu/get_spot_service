@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.juvodu.database.DatabaseHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,6 +63,22 @@ public class GenericPersistenceService<T> {
     public T getById(String id){
 
         return mapper.load(persistenceClass, id);
+    }
+
+    /**
+     * Retrieve a list of records by its hash keys - only works on tables without a range key
+     *
+     * @param ids
+     *          of the records
+     * @return list of record models
+     */
+    public List<T> getByIds(List<String> ids){
+
+        List<T> records = new ArrayList<>();
+        for(String id : ids){
+            records.add(getById(id));
+        }
+        return records;
     }
 
     /**

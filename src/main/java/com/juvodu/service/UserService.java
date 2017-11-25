@@ -10,8 +10,8 @@ import com.juvodu.database.model.User;
  */
 public class UserService<T extends User> extends GenericPersistenceService<T>{
 
-    public UserService(Class<T> userClass){
-        super(userClass, DynamoDBMapperConfig.SaveBehavior.UPDATE);
+    public UserService(Class<T> persistenceClass){
+        super(persistenceClass, DynamoDBMapperConfig.SaveBehavior.UPDATE);
     }
 
     /**

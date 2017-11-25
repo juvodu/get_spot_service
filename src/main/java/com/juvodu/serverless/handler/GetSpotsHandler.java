@@ -8,11 +8,9 @@ import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudSpotResponse;
 import com.juvodu.service.SpotService;
-import com.juvodu.service.WeatherService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -61,11 +59,11 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 	 *
 	 * @return list of retrieved spots
 	 */
-	private List<Spot> findSpotsByParameter(Map<String, String> queryStringParametersMap) throws WWOMClientException {
+	private List<BaseSpot> findSpotsByParameter(Map<String, String> queryStringParametersMap) throws WWOMClientException {
 
 		// base spot class as list views only need partial data of a spot
-		SpotService baseSpotService = new SpotService(BaseSpot.class);
-		List<Spot> spots = new ArrayList<>();
+		SpotService<BaseSpot> baseSpotService = new SpotService(BaseSpot.class);
+		List<BaseSpot> spots = new ArrayList<>();
 
 		String ids = queryStringParametersMap.get("ids");
 		String continent = queryStringParametersMap.get("continent");
@@ -89,7 +87,7 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 		}else if(!StringUtils.isBlank(ids)) {
 
 			LOG.info("Find spots by ids: " + ids);
-			spots.addAll(baseSpotService.getSpotsByIds(ParameterParser.getSpotIds(ids)));
+			spots.addAll(baseSpotService.getByIds(ParameterParser.getSpotIds(ids)));
 
 		}else if(!StringUtils.isAnyBlank(continent, country)){
 

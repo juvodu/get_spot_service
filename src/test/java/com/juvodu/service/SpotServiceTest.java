@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotNull;
 public class SpotServiceTest {
 
     // testmodel which takes ensures persisting all data to the test table "spot_test"
-    private static SpotService spotService;
+    private static SpotService<SpotTestModel> spotService;
     private final Country france = new Country("FR", "France");
     private final Country us =  new Country("US", "United States");
     private final Country spain = new Country("ES", "Spain");
@@ -66,7 +66,7 @@ public class SpotServiceTest {
     public void givenSavedSpotWhenDeleteThenSuccess(){
 
         //setup
-        Spot spot = createSpot(Continent.EU, france, hossegor);
+        SpotTestModel spot = createSpot(Continent.EU, france, hossegor);
         spotService.save(spot);
 
         //execute
@@ -81,7 +81,7 @@ public class SpotServiceTest {
         String id = spotService.save(spot);
 
         //execute
-        Spot spotResult = (Spot) spotService.getSpotById(id);
+        Spot spotResult = (Spot) spotService.getById(id);
 
         //verify
         assertNotNull(spotResult);
@@ -99,7 +99,7 @@ public class SpotServiceTest {
         spotService.save(spot2);
 
         //execute
-        List<Spot> allSpots = spotService.findAll();
+        List<SpotTestModel> allSpots = spotService.findAll();
 
         //verify
         assertNotNull(allSpots);
@@ -119,7 +119,7 @@ public class SpotServiceTest {
         spotService.save(spot);
 
         //verify
-        Spot spot_result = (Spot) spotService.getSpotById(spot.getId());
+        Spot spot_result = spotService.getById(spot.getId());
         assertEquals("Updated spot", spot_result.getName());
         assertEquals("Updated spot description", spot_result.getDescription());
     }
@@ -139,7 +139,7 @@ public class SpotServiceTest {
         //verify
         ids.add(spotEU.getId());
         ids.add(spotNA.getId());
-        List<Spot> spots = spotService.getSpotsByIds(ids);
+        List<SpotTestModel> spots = spotService.getByIds(ids);
 
         assertEquals(2, spots.size());
         for(Spot spot : spots){
@@ -157,7 +157,7 @@ public class SpotServiceTest {
         spotService.save(spotNA);
 
         //execute
-        List<Spot> spots = spotService.findByContinent(Continent.EU, 1);
+        List<SpotTestModel> spots = spotService.findByContinent(Continent.EU, 1);
 
         //verify
         assertNotNull(spots);
@@ -175,7 +175,7 @@ public class SpotServiceTest {
         spotService.save(spot);
 
         //execute
-        List<Spot> spots = spotService.findByCountry(spot.getContinent(), spot.getCountry(), 1);
+        List<SpotTestModel> spots = spotService.findByCountry(spot.getContinent(), spot.getCountry(), 1);
 
         //verify
         assertNotNull(spots);
@@ -197,7 +197,7 @@ public class SpotServiceTest {
         spotService.save(spot3);
 
         //execute
-        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 1, 1);
+        List<SpotTestModel> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 1, 1);
 
         //verify
         assertNotNull(spots);
@@ -220,7 +220,7 @@ public class SpotServiceTest {
         spotService.save(spot3);
 
         //execute - distance between both spots is 205km
-        List<Spot> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 210, 2);
+        List<SpotTestModel> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 210, 2);
 
         //verify
         assertNotNull(spots);
@@ -239,7 +239,7 @@ public class SpotServiceTest {
         spotService.save(spot);
 
         //execute
-        List<Spot> spots = spotService.findByToBeUpdated(Continent.EU);
+        List<SpotTestModel> spots = spotService.findByToBeUpdated(Continent.EU);
 
         //verify
         assertNotNull(spots);
@@ -257,7 +257,7 @@ public class SpotServiceTest {
         spotService.save(spot);
 
         //execute
-        List<Spot> spots = spotService.findByToBeUpdated(Continent.EU);
+        List<SpotTestModel> spots = spotService.findByToBeUpdated(Continent.EU);
 
         //verify
         assertNotNull(spots);
@@ -274,9 +274,9 @@ public class SpotServiceTest {
      *
      * @return the created instance of the spot
      */
-    private Spot createSpot(Continent continent, Country country, Position position){
+    private SpotTestModel createSpot(Continent continent, Country country, Position position){
 
-        Spot spotTestModel = new SpotTestModel();
+        SpotTestModel spotTestModel = new SpotTestModel();
         spotTestModel.setName("unit test name");
         spotTestModel.setDescription("unit test description");
         spotTestModel.setShortDescription("unit short description");

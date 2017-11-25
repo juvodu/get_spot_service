@@ -3,11 +3,8 @@ package com.juvodu.service;
 import ch.hsr.geohash.GeoHash;
 import ch.hsr.geohash.WGS84Point;
 import ch.hsr.geohash.queries.GeoHashCircleQuery;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.juvodu.database.DatabaseHelper;
 import com.juvodu.database.model.*;
 import com.juvodu.util.Constants;
@@ -21,53 +18,15 @@ import java.util.stream.Collectors;
  *
  * @author Juvodu
  */
-public class SpotService<T extends BaseSpot> {
+public class SpotService<T extends BaseSpot> extends GenericPersistenceService<T>{
 
-    private final DynamoDBMapper mapper;
-    private final Class<T> spotClass;
     private final DatabaseHelper<T> databaseHelper;
 
-    public SpotService(Class<T> spotClass){
+    public SpotService(Class<T> persistenceClass){
 
-        this.spotClass = spotClass;
+        // null values do not delete values
+        super(persistenceClass, DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES);
         this.databaseHelper = new DatabaseHelper<>();
-        AmazonDynamoDB dynamoDB = DatabaseHelper.getDynamoDB();
-
-        // configure dynamo DB mapper here
-        DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig.Builder()
-                .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES) // null values do not delete values
-                .build();
-
-        this.mapper = new DynamoDBMapper(dynamoDB, mapperConfig);
-    }
-
-    /**
-     * Retrieve a spot by its hash key
-     *
-     * @param id
-     *          of the spot
-     *
-     * @return the spot testmodel populated with data
-     */
-    public T getSpotById(String id){
-
-        return mapper.load(spotClass, id);
-    }
-
-    /**
-     * Retrieve a list of spot by its hash keys
-     *
-     * @param ids
-     *          of the spots
-     * @return list of spots models
-     */
-    public List<T> getSpotsByIds(List<String> ids){
-
-        List<T> spots = new ArrayList<>();
-        for(String id : ids){
-            spots.add(getSpotById(id));
-        }
-        return spots;
     }
 
     /**
@@ -99,38 +58,6 @@ public class SpotService<T extends BaseSpot> {
     }
 
     /**
-     * Delete the spot instance
-     *
-     * @param spot
-     *          the spot instance to delete
-     */
-    public void delete(T spot){
-
-        mapper.delete(spot);
-    }
-
-    /**
-     * Delete all table entries - for testing purposes only
-     */
-    public void deleteAll(){
-
-        for(T spot : findAll()){
-            delete(spot);
-        }
-    }
-
-    /**
-     * Return all available spots, scan requests are potentially slow
-     *
-     * @return list of spots saved in the DB
-     */
-    public List<T> findAll(){
-
-        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
-        return mapper.scan(spotClass, scanExpression);
-    }
-
-    /**
      * Find all spots for a given continent
      *
      * @param continent
@@ -145,7 +72,7 @@ public class SpotService<T extends BaseSpot> {
         String filterExpression = "continent = :val1";
         DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(continent.getCode(),
                 null, Constants.CONTINENT_COUNTRY_INDEX, filterExpression, limit);
-        return mapper.queryPage(spotClass, queryExpression).getResults();
+        return mapper.queryPage(persistenceClass, queryExpression).getResults();
     }
 
     /**
@@ -167,7 +94,7 @@ public class SpotService<T extends BaseSpot> {
         DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(continent.getCode(),
                 country.getCode(), Constants.CONTINENT_COUNTRY_INDEX, filterExpression, limit);
 
-        return mapper.queryPage(spotClass, queryExpression).getResults();
+        return mapper.queryPage(persistenceClass, queryExpression).getResults();
     }
 
     /**
@@ -198,7 +125,7 @@ public class SpotService<T extends BaseSpot> {
             String filterExpression = "continent = :val1 and begins_with(geohash,:val2)";
             DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(continent.getCode(),
                     binaryHashString, Constants.CONTINENT_GEOHASH_INDEX, filterExpression, limit);
-            spots.addAll(mapper.queryPage(spotClass, queryExpression).getResults());
+            spots.addAll(mapper.queryPage(persistenceClass, queryExpression).getResults());
         }
 
         // calculate distance to each spot in km
@@ -227,6 +154,6 @@ public class SpotService<T extends BaseSpot> {
         DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(continent.getCode(),
                 Long.toString(oneDayAgoMilli), Constants.CONTINENT_CRONDATE_INDEX, filterExpression, 1000);
 
-        return mapper.queryPage(spotClass, queryExpression).getResults();
+        return mapper.queryPage(persistenceClass, queryExpression).getResults();
     }
 }
