@@ -6,7 +6,6 @@ import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.*;
 import com.juvodu.database.model.Platform;
 import com.juvodu.database.model.Spot;
-import com.juvodu.database.model.User;
 import com.juvodu.util.Constants;
 import com.juvodu.util.JsonHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -21,14 +20,12 @@ import java.util.regex.Pattern;
  *
  * @author Juvodu
  */
-public class NotificationService<T extends User> {
+public class NotificationService {
 
-    private UserService userService;
     private AmazonSNS snsClient;
 
-    public NotificationService(UserService userService){
+    public NotificationService(){
 
-        this.userService = userService;
         this.snsClient = AmazonSNSClientBuilder.standard()
                 .withRegion(Regions.EU_CENTRAL_1)
                 .build();
@@ -38,21 +35,19 @@ public class NotificationService<T extends User> {
      * Register user for notifications following best practices outlined
      * http://docs.aws.amazon.com/sns/latest/dg/mobile-platform-endpoint.html
      *
-     * @param userId
-     *              user to register for notifications
      * @param deviceToken
      *              retrieved from the mobile operating system
+     * @param endpointArn
+     *              endpoint to be updated or null to create a new endpoint
      */
-    public void registerDeviceForPushNotification(String userId, String deviceToken) {
-
-        String endpointArn = userService.retrieveEndpointArnByUserId(userId);
+    public String registerDeviceForPushNotification(String deviceToken, String endpointArn) {
 
         boolean updateNeeded = false;
         boolean createNeeded = (null == endpointArn);
 
         if (createNeeded) {
             // No platform endpoint ARN is stored; need to call createEndpoint.
-            endpointArn = createEndpoint(userId, deviceToken);
+            endpointArn = createEndpoint(deviceToken);
             createNeeded = false;
         }
 
@@ -72,7 +67,7 @@ public class NotificationService<T extends User> {
         }
 
         if (createNeeded) {
-            createEndpoint(userId, deviceToken);
+            endpointArn = createEndpoint(deviceToken);
         }
 
 
@@ -85,13 +80,14 @@ public class NotificationService<T extends User> {
             SetEndpointAttributesRequest saeReq = new SetEndpointAttributesRequest().withEndpointArn(endpointArn).withAttributes(attribs);
             snsClient.setEndpointAttributes(saeReq);
         }
+        return endpointArn;
     }
 
     /**
      *
      * @return the created endpoint but never null
      */
-    private String createEndpoint(String userId, String deviceToken) {
+    private String createEndpoint(String deviceToken) {
 
         String endpointArn = null;
 
@@ -121,7 +117,6 @@ public class NotificationService<T extends User> {
                 throw ipe;
             }
         }
-        userService.storeEndpointArn(userId, endpointArn);
         return endpointArn;
     }
 

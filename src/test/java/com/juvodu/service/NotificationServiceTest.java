@@ -1,7 +1,6 @@
 package com.juvodu.service;
 
 import com.juvodu.database.model.Platform;
-import com.juvodu.database.model.User;
 import com.juvodu.service.testmodel.UserTestModel;
 import com.juvodu.util.Constants;
 import org.junit.Before;
@@ -10,7 +9,8 @@ import org.junit.Test;
 
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test suite for the NotificationService
@@ -27,7 +27,7 @@ public class NotificationServiceTest {
     @BeforeClass
     public static void beforeClass(){
         userService = new UserService(UserTestModel.class);
-        notificationService = new NotificationService(userService);
+        notificationService = new NotificationService();
     }
 
     @Before
@@ -43,29 +43,24 @@ public class NotificationServiceTest {
         String deviceToken = UUID.randomUUID().toString();
 
         // execute
-        notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
+        String endpointArn = notificationService.registerDeviceForPushNotification(deviceToken, null);
 
         // verify
-        User user = userService.getByHashKey(USERNAME);
-        assertNotNull(user.getPlatformEndpointArn());
+        assertNotNull(endpointArn);
     }
 
     @Test
     public void givenArnWithoutEndpointWhenRegisterDeviceForPushNotificationThenCreateNewEndpointWithNewArn(){
 
         // setup
-        String arn = Constants.SNS_APPLICATION_ARN.replace("app", "endpoint") + "/" + UUID.randomUUID();
+        String platformArn = Constants.SNS_APPLICATION_ARN.replace("app", "endpoint") + "/" + UUID.randomUUID();
         String deviceToken = UUID.randomUUID().toString();
-        UserTestModel user = createUser();
-        user.setPlatformEndpointArn(arn);
-        userService.save(user);
 
         // execute
-        notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
+        String endpointArn = notificationService.registerDeviceForPushNotification(deviceToken, platformArn);
 
         // verify
-        user = userService.getByHashKey(USERNAME);
-        assertFalse(arn.equals(user.getPlatformEndpointArn()));
+        assertFalse(platformArn.equals(endpointArn));
     }
 
     @Test
@@ -73,14 +68,10 @@ public class NotificationServiceTest {
 
         // setup
         String deviceToken = UUID.randomUUID().toString();
-        UserTestModel user = createUser();
-        userService.save(user);
-        String userId = user.getId();
-        notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
-        user = userService.getByHashKey(userId);
+        String endpointArn = notificationService.registerDeviceForPushNotification(deviceToken, null);
 
         // execute
-        String messageId = notificationService.pushNotification(Platform.GCM, user.getPlatformEndpointArn(), "unit-subject", "unit-message");
+        String messageId = notificationService.pushNotification(Platform.GCM, endpointArn, "unit-subject", "unit-message");
 
         // verify
         assertNotNull(messageId);
@@ -99,7 +90,7 @@ public class NotificationServiceTest {
     private UserTestModel createUser(){
 
         UserTestModel user = new UserTestModel();
-        user.setId(USERNAME);
+        user.setUserName(USERNAME);
         return user;
     }
 }

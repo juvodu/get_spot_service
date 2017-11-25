@@ -97,7 +97,7 @@ public class UserServiceTest {
         userService.save(user);
 
         //verify
-        User userResult = (User) userService.getByHashKey(user.getId());
+        User userResult = userService.getByHashKey(user.getId());
         assertEquals("updated-platform-endpoint", userResult.getPlatformEndpointArn());
     }
 

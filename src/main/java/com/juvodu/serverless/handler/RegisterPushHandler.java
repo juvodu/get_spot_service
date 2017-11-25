@@ -40,9 +40,12 @@ public class RegisterPushHandler implements RequestHandler<Map<String, Object>, 
             JsonNode jsonNode = objectMapper.readTree(body.toString());
             String deviceToken = jsonNode.get("deviceToken").textValue();
             userId = jsonNode.get("userId").textValue();
-            UserService userService = new UserService(User.class);
-            NotificationService notificationService = new NotificationService(userService);
-            notificationService.registerDeviceForPushNotification(userId, deviceToken);
+            UserService<User> userService = new UserService(User.class);
+            User user = userService.getByHashKey(userId);
+            NotificationService notificationService = new NotificationService();
+            String endpointArn = notificationService.registerDeviceForPushNotification(deviceToken, user.getPlatformEndpointArn());
+            user.setPlatformEndpointArn(endpointArn);
+            userService.save(user);
 
         }catch(Exception e){
 

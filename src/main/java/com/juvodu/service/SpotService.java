@@ -21,12 +21,14 @@ import java.util.stream.Collectors;
 public class SpotService<T extends BaseSpot> extends GenericPersistenceService<T>{
 
     private final DatabaseHelper<T> databaseHelper;
+    private final NotificationService notificationService;
 
     public SpotService(Class<T> persistenceClass){
 
         // null values do not delete values
         super(persistenceClass, DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES);
         this.databaseHelper = new DatabaseHelper<>();
+        this.notificationService = new NotificationService();
     }
 
     /**
@@ -50,6 +52,9 @@ public class SpotService<T extends BaseSpot> extends GenericPersistenceService<T
         if(spot.getCronDate() == null) {
             spot.setCronDate(new Date());
         }
+
+        // create topic
+
 
         // save does not return, instead it populates the generated id to the passed spot instance
         mapper.save(spot);
