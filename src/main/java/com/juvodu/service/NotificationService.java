@@ -146,11 +146,26 @@ public class NotificationService<T extends User> {
      *            of the topic to be subscribed to
      * @param endpointArn
      *             to receive notifications
+     *
+     * @return the created subscription arn
      */
-    public void subscribeToTopic(String topicArn, String endpointArn){
+    public String subscribeToTopic(String topicArn, String endpointArn){
 
         SubscribeRequest subscribeRequest = new SubscribeRequest(topicArn, "application", endpointArn);
-        snsClient.subscribe(subscribeRequest);
+        SubscribeResult subscribeResult = snsClient.subscribe(subscribeRequest);
+        return subscribeResult.getSubscriptionArn();
+    }
+
+    /**
+     * Removes subscription from a topic
+     *
+     * @param subscriptionArn
+     *              of the subscription to be removed
+     */
+    public void unsubscribe(String subscriptionArn){
+
+        UnsubscribeRequest unsubscribeRequest = new UnsubscribeRequest(subscriptionArn);
+        snsClient.unsubscribe(unsubscribeRequest);
     }
 
     /**

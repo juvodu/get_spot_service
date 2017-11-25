@@ -18,6 +18,9 @@ public class User {
     private String id;
 
     @DynamoDBAttribute
+    private String userName;
+
+    @DynamoDBAttribute
     private String platformEndpointArn;
 
     public String getId() {
@@ -26,6 +29,14 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPlatformEndpointArn() {
