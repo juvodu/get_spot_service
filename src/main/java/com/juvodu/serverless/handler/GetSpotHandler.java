@@ -33,13 +33,14 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
         // use detailed spot class
         SpotService<Spot> spotService = new SpotService(Spot.class);
         Object body;
+        String id = null;
 
         try {
 
             Map<String, String> parameters = ParameterParser.getParameters(queryStringParameters);
-            String id = parameters.get("id");
+            id = parameters.get("id");
 
-            Spot spot = spotService.getById(id);
+            Spot spot = spotService.getByHashKey(id);
             Forecast forecast = getForecast(spot);
             spot.setForecast(forecast);
 
@@ -48,7 +49,7 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
         } catch (Exception e) {
 
             statusCode = 500;
-            body = new CrudSpotResponse(queryStringParameters, "Error during get spot by id.");
+            body = new CrudSpotResponse(id, "Error during get spot by id.");
             e.printStackTrace();
         }
 

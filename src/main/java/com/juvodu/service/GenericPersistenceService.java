@@ -55,14 +55,28 @@ public class GenericPersistenceService<T> {
     /**
      * Retrieve a record by its hash key - only works on tables without a range key
      *
-     * @param id
+     * @param hashKey
      *          of the record
      *
      * @return the retrieved record
      */
-    public T getById(String id){
+    public T getByHashKey(String hashKey){
 
-        return mapper.load(persistenceClass, id);
+        return mapper.load(persistenceClass, hashKey);
+    }
+
+    /**
+     * Retrieve a record by its hash and range key, combination must be unique - range key must exist on table
+     * @param hashKey
+     *              of the record
+     * @param rangeKey
+     *              of the record
+     *
+     * @return the retrieved record
+     */
+    public T getByCompositeKey(String hashKey, String rangeKey){
+
+        return mapper.load(persistenceClass, hashKey, rangeKey);
     }
 
     /**
@@ -76,7 +90,7 @@ public class GenericPersistenceService<T> {
 
         List<T> records = new ArrayList<>();
         for(String id : ids){
-            records.add(getById(id));
+            records.add(getByHashKey(id));
         }
         return records;
     }

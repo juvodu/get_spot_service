@@ -21,7 +21,7 @@ public class UserService<T extends User> extends GenericPersistenceService<T>{
     public String retrieveEndpointArnByUserId(String userId) {
 
         String arn = null;
-        User user = getById(userId);
+        User user = getByHashKey(userId);
         if(user != null){
             arn = user.getPlatformEndpointArn();
         }

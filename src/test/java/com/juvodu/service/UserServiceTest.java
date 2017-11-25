@@ -60,7 +60,7 @@ public class UserServiceTest {
         String id = user.getId();
 
                 //execute
-        User userResult = userService.getById(id);
+        User userResult = userService.getByHashKey(id);
 
         //verify
         assertNotNull(userResult);
@@ -97,7 +97,7 @@ public class UserServiceTest {
         userService.save(user);
 
         //verify
-        User userResult = (User) userService.getById(user.getId());
+        User userResult = (User) userService.getByHashKey(user.getId());
         assertEquals("updated-platform-endpoint", userResult.getPlatformEndpointArn());
     }
 

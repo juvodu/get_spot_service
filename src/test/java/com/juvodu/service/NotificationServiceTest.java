@@ -46,7 +46,7 @@ public class NotificationServiceTest {
         notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
 
         // verify
-        User user = userService.getById(USERNAME);
+        User user = userService.getByHashKey(USERNAME);
         assertNotNull(user.getPlatformEndpointArn());
     }
 
@@ -64,7 +64,7 @@ public class NotificationServiceTest {
         notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
 
         // verify
-        user = userService.getById(USERNAME);
+        user = userService.getByHashKey(USERNAME);
         assertFalse(arn.equals(user.getPlatformEndpointArn()));
     }
 
@@ -77,7 +77,7 @@ public class NotificationServiceTest {
         userService.save(user);
         String userId = user.getId();
         notificationService.registerDeviceForPushNotification(USERNAME, deviceToken);
-        user = userService.getById(userId);
+        user = userService.getByHashKey(userId);
 
         // execute
         String messageId = notificationService.pushNotification(Platform.GCM, user.getPlatformEndpointArn(), "unit-subject", "unit-message");
