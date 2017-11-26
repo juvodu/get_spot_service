@@ -10,4 +10,5 @@ public class Constants {
     public static final String CONTINENT_COUNTRY_INDEX = "continent-country-index";
     public static final String CONTINENT_GEOHASH_INDEX = "continent-geohash-index";
     public static final String CONTINENT_CRONDATE_INDEX ="continent-crondate-index";
+    public static final String USER_TOPIC_INDEX ="user-topic-index";
 }
