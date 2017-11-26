@@ -21,8 +21,11 @@ provider:
      Action:
        - "SNS:GetEndpointAttributes"
        - "SNS:CreatePlatformEndpoint"
+       - "SNS:CreateTopic"
+       - "SNS:Subscribe"
+       - "SNS:Unsubscribe"
      Resource:
-       - arn:aws:sns:*:*:app/GCM/LetMeGoAndroid
+       - arn:aws:sns:*:*:*
 
 # you can add packaging information here
 package:
@@ -77,6 +80,14 @@ functions:
           method: post
           cors: true
           private: true
+  createFavorite:
+      handler: com.juvodu.serverless.handler.CreateFavoriteHandler
+      events:
+        - http:
+            path: favorite/create
+            method: post
+            cors: true
+            private: true
   registerPush:
     handler: com.juvodu.serverless.handler.RegisterPushHandler
     events:
@@ -96,6 +107,36 @@ functions:
 # The "Resources" your "Functions" use.  Raw AWS CloudFormation goes in here.
 resources:
   Resources:
+    SubscriptionTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: subscription
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    FavoriteTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: favorite
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: spotId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: spotId
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
     UserTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -185,6 +226,8 @@ resources:
               Resource:
                 - arn:aws:dynamodb:*:*:table/spot*
                 - arn:aws:dynamodb:*:*:table/user*
+                - arn:aws:dynamodb:*:*:table/favorite*
+                - arn:aws:dynamodb:*:*:table/subscription*
         Roles:
           - Ref: IamRoleLambdaExecution
 

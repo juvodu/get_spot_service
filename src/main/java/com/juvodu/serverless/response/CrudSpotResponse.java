@@ -5,16 +5,14 @@ package com.juvodu.serverless.response;
  *
  * @author Juvodu
  */
-public class CrudSpotResponse {
+public class CrudSpotResponse extends CrudResponse {
 
     private String id;
 
-    private String message;
-
     public CrudSpotResponse(String id, String message){
-
+        super(message);
         this.id = id;
-        this.message = message;
+
     }
 
     public String getId() {
@@ -23,13 +21,5 @@ public class CrudSpotResponse {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }

@@ -6,4 +6,6 @@ package com.juvodu.serverless.handler;
  * @author Juvodu
  */
 public class DeleteFavoriteHandler {
+
+    // TODO: remove topic, favorite and subscription
 }

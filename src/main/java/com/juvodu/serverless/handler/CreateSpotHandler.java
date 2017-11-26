@@ -18,9 +18,8 @@ import java.util.Map;
  */
 public class CreateSpotHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-private static final Logger LOG = Logger.getLogger(CreateSpotHandler.class);
-private static final ObjectMapper objectMapper = new ObjectMapper();
-
+    private static final Logger LOG = Logger.getLogger(CreateSpotHandler.class);
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
