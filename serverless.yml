@@ -105,7 +105,7 @@ functions:
           cors: true
           private: true
   registerPush:
-    handler: com.juvodu.serverless.handler.RegisterPushHandler
+    handler: com.juvodu.serverless.handler.CreateDeviceHandler
     events:
       - http:
           path: device/update

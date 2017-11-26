@@ -18,9 +18,9 @@ import java.util.Map;
  *
  * @author Juvodu
  */
-public class RegisterPushHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class CreateDeviceHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-    private static final Logger LOG = Logger.getLogger(RegisterPushHandler.class);
+    private static final Logger LOG = Logger.getLogger(CreateDeviceHandler.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
