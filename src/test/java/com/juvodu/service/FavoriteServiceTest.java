@@ -1,15 +1,10 @@
 package com.juvodu.service;
 
-import com.juvodu.database.model.Favorite;
 import com.juvodu.service.testmodel.FavoriteTestModel;
 import com.juvodu.service.testmodel.SpotTestModel;
 import com.juvodu.service.testmodel.UserTestModel;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * Test suite for the FavoriteService
@@ -35,41 +30,5 @@ public class FavoriteServiceTest {
     public void before(){
 
         favoriteService.deleteAll();
-    }
-
-    @Test
-    public void givenFavoriteWhenGetByCompositeKeyThenReturnFavorite(){
-
-        // setup
-        UserTestModel user = new UserTestModel();
-        userService.save(user);
-        SpotTestModel spot = new SpotTestModel();
-        spotService.save(spot);
-        FavoriteTestModel favorite = new FavoriteTestModel();
-        favorite.setUserId(user.getId());
-        favorite.setSpotId(spot.getId());
-        favoriteService.save(favorite);
-
-        // execute
-        FavoriteTestModel fav = favoriteService.getByCompositeKey(favorite.getUserId(), favorite.getSpotId());
-
-        // verify
-        assertEquals(user.getId(), fav.getUserId());
-        assertEquals(spot.getId(), fav.getSpotId());
-    }
-
-    @Test
-    public void givenNonExistingFavoriteWhenGetByCompositeKeyThenReturnNull(){
-
-        //setup
-        Favorite favorite = new Favorite();
-        favorite.setUserId("user");
-        favorite.setSpotId("spot");
-
-        // execute
-        FavoriteTestModel fav = favoriteService.getByCompositeKey(favorite.getUserId(), favorite.getSpotId());
-
-        // verify
-        assertNull(fav);
     }
 }

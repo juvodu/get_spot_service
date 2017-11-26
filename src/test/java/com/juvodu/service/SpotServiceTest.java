@@ -81,7 +81,7 @@ public class SpotServiceTest {
         String id = spotService.save(spot);
 
         //execute
-        Spot spotResult = (Spot) spotService.getByHashKey(id);
+        Spot spotResult = spotService.getByHashKey(id);
 
         //verify
         assertNotNull(spotResult);
