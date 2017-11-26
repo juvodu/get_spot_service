@@ -54,7 +54,10 @@ public class SpotService<T extends BaseSpot> extends GenericPersistenceService<T
         }
 
         // create topic
-
+        if(spot.getTopicArn() == null) {
+            String topicArn = notificationService.createTopic(UUID.randomUUID().toString());
+            spot.setTopicArn(topicArn);
+        }
 
         // save does not return, instead it populates the generated id to the passed spot instance
         mapper.save(spot);
