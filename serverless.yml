@@ -88,6 +88,14 @@ functions:
             method: post
             cors: true
             private: true
+  deleteFavorite:
+    handler: com.juvodu.serverless.handler.DeleteFavoriteHandler
+    events:
+      - http:
+          path: favorite/delete
+          method: post
+          cors: true
+          private: true
   registerPush:
     handler: com.juvodu.serverless.handler.RegisterPushHandler
     events:

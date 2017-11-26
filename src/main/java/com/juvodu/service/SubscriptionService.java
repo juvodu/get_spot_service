@@ -20,4 +20,10 @@ public class SubscriptionService<T extends Subscription> extends GenericPersiste
 
         super(persistenceClass, DynamoDBMapperConfig.SaveBehavior.UPDATE);
     }
+
+    public Subscription getByUserAndTopic(String userId, String topicArn){
+
+        //TODO: get subscription with new indexes
+        return null;
+    }
 }
