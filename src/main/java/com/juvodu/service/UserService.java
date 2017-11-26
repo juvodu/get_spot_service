@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.juvodu.database.model.User;
 
 /**
- * Service for user retrieval and processing
+ * Service for storage, retrieval and processing of users
  *
  * @author Juvodu
  */

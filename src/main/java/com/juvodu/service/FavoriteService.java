@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.juvodu.database.model.Favorite;
 
 /**
- * TODO: description
+ * Service for storage, retrieval and processing of favorites
  *
  * @author Juvodu
  */

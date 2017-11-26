@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.juvodu.database.model.Subscription;
 
 /**
- * TODO: description
+ * Service for storage, retrieval and processing of subscription
  *
  * @author Juvodu
  */

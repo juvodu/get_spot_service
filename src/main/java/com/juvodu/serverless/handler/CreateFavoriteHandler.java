@@ -3,12 +3,13 @@ package com.juvodu.serverless.handler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.juvodu.database.model.Favorite;
+import com.juvodu.database.model.Spot;
 import com.juvodu.database.model.Subscription;
+import com.juvodu.database.model.User;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudSpotResponse;
-import com.juvodu.service.FavoriteService;
-import com.juvodu.service.SubscriptionService;
+import com.juvodu.service.*;
 import org.apache.log4j.Logger;
 
 import java.util.Map;
@@ -26,6 +27,9 @@ public class CreateFavoriteHandler implements RequestHandler<Map<String, Object>
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
         FavoriteService<Favorite> favoriteService = new FavoriteService<>(Favorite.class);
+        SpotService<Spot> spotService = new SpotService(Spot.class);
+        UserService<User> userService = new UserService(User.class);
+        NotificationService notificationService = new NotificationService();
         SubscriptionService<Subscription> subscriptionService = new SubscriptionService(Subscription.class);
         String queryStringParameters = input.get("queryStringParameters").toString();
         LOG.info("Query String parameters: " + queryStringParameters);
@@ -47,8 +51,18 @@ public class CreateFavoriteHandler implements RequestHandler<Map<String, Object>
                 favorite.setSpotId(spotId);
                 favoriteService.save(favorite);
 
-                //TODO:
-                // subscribe and save subscription
+                // get topic from spot and endpoint from user
+                Spot spot = spotService.getByHashKey(spotId);
+                User user = userService.getByHashKey(userId);
+
+                // subscribe
+                String subscriptionArn = notificationService.subscribeToTopic(spot.getTopicArn(), user.getPlatformEndpointArn());
+                Subscription subscription = new Subscription();
+                subscription.setSubscriptionArn(subscriptionArn);
+                subscription.setTopicArn(spot.getTopicArn());
+                subscription.setEndpointArn(user.getPlatformEndpointArn());
+                subscription.setUserId(userId);
+                subscriptionService.save(subscription);
             }
 
         } catch (Exception e) {
