@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.juvodu.database.model.Position;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +45,39 @@ public class DatabaseHelper<T> {
     }
 
     /**
+     * Create a query expression on a table
+     *
+     * @param partitionKey
+     *          the partition key to filter for
+     * @param sortKey
+     *          optional search key to filter for
+     * @param conditionExpression
+     *          contains the actual operators used for filtering
+     * @param limit
+     *          max amount of results
+     *
+     * @return prepared query to run on dynamo db table
+     */
+    public DynamoDBQueryExpression<T> createQueryExpression(String partitionKey, String sortKey, String conditionExpression, int limit){
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS(partitionKey));
+
+        //optional sort key
+        if(sortKey != null) {
+            eav.put(":val2", new AttributeValue().withS(sortKey));
+        }
+
+        DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
+                .withKeyConditionExpression(conditionExpression)
+                .withConsistentRead(false)
+                .withExpressionAttributeValues(eav)
+                .withLimit(limit);
+
+        return queryExpression;
+    }
+
+    /**
      * Create a query expression on an index table
      *
      * @param partitionKey
@@ -61,20 +95,11 @@ public class DatabaseHelper<T> {
      */
     public DynamoDBQueryExpression<T> createIndexQueryExpression(String partitionKey, String sortKey, String index, String conditionExpression, int limit){
 
-        Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":val1", new AttributeValue().withS(partitionKey));
+        DynamoDBQueryExpression queryExpression = createQueryExpression(partitionKey, sortKey, conditionExpression, limit);
 
-        //optional sort key
-        if(sortKey != null) {
-            eav.put(":val2", new AttributeValue().withS(sortKey));
+        if(StringUtils.isNotBlank(index)){
+            queryExpression.withIndexName(index);
         }
-
-        DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
-                .withKeyConditionExpression(conditionExpression)
-                .withIndexName(index)
-                .withConsistentRead(false)
-                .withExpressionAttributeValues(eav)
-                .withLimit(limit);
 
         return queryExpression;
     }

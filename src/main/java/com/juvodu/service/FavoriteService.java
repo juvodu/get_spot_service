@@ -1,7 +1,11 @@
 package com.juvodu.service;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.juvodu.database.DatabaseHelper;
 import com.juvodu.database.model.Favorite;
+
+import java.util.List;
 
 /**
  * Service for storage, retrieval and processing of favorites
@@ -9,6 +13,8 @@ import com.juvodu.database.model.Favorite;
  * @author Juvodu
  */
 public class FavoriteService<T extends Favorite> extends GenericPersistenceService<T>{
+
+    private final DatabaseHelper<T> databaseHelper;
 
     /**
      * Ctor
@@ -19,5 +25,14 @@ public class FavoriteService<T extends Favorite> extends GenericPersistenceServi
     public FavoriteService(Class<T> persistenceClass){
 
         super(persistenceClass, DynamoDBMapperConfig.SaveBehavior.UPDATE);
+        this.databaseHelper = new DatabaseHelper();
+    }
+
+    public List<T> getFavoritesByUser(String userId, int limit){
+
+        String filterExpression = "userId = :val1";
+        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(userId,
+                null, filterExpression, limit);
+        return mapper.queryPage(persistenceClass, queryExpression).getResults();
     }
 }

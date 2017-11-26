@@ -5,6 +5,12 @@ import com.juvodu.service.testmodel.SpotTestModel;
 import com.juvodu.service.testmodel.UserTestModel;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.List;
+
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test suite for the FavoriteService
@@ -30,5 +36,25 @@ public class FavoriteServiceTest {
     public void before(){
 
         favoriteService.deleteAll();
+    }
+
+    @Test
+    public void givenUserWhenGetFavoritesByUserThenReturnFavorites(){
+
+        // setup
+        UserTestModel user = new UserTestModel();
+        userService.save(user);
+        FavoriteTestModel favorite = new FavoriteTestModel();
+        favorite.setUserId(user.getId());
+        favorite.setSpotId("spot");
+        favoriteService.save(favorite);
+
+        // execute
+        List<FavoriteTestModel> favorites = favoriteService.getFavoritesByUser(user.getId(), 100);
+
+        // verify
+        assertNotNull(favorites);
+        assertEquals(1, favorites.size());
+        assertEquals(user.getId(), favorite.getUserId());
     }
 }

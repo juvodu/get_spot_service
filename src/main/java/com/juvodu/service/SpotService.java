@@ -27,7 +27,7 @@ public class SpotService<T extends BaseSpot> extends GenericPersistenceService<T
 
         // null values do not delete values
         super(persistenceClass, DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES);
-        this.databaseHelper = new DatabaseHelper<>();
+        this.databaseHelper = new DatabaseHelper();
         this.notificationService = new NotificationService();
     }
 
