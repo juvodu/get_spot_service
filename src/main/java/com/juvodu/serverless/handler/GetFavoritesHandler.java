@@ -2,15 +2,20 @@ package com.juvodu.serverless.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.juvodu.database.model.BaseSpot;
 import com.juvodu.database.model.Favorite;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudResponse;
 import com.juvodu.service.FavoriteService;
+import com.juvodu.service.SpotService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Handler which retrieves a list of favorites for a given user.
@@ -29,7 +34,8 @@ public class GetFavoritesHandler implements RequestHandler<Map<String, Object>, 
         int statusCode = 200;
 
         FavoriteService<Favorite> favoriteService = new FavoriteService<>(Favorite.class);
-        Object body = null;
+        SpotService<BaseSpot> spotService = new SpotService(BaseSpot.class);
+        Object body;
 
         try {
 
@@ -43,8 +49,15 @@ public class GetFavoritesHandler implements RequestHandler<Map<String, Object>, 
                 limit = Integer.parseInt(limitStr);
             }
 
-            body = favoriteService.getFavoritesByUser(userId, limit);
+            // get favorite spots
+            List<Favorite> favorites = favoriteService.getFavoritesByUser(userId, limit);
+            List<BaseSpot> spots = new ArrayList();
+            if(favorites.size() > 0 ) {
+                List<String> spotIds = favorites.stream().map(Favorite::getSpotId).collect(Collectors.toList());
+                spots = spotService.getByIds(spotIds);
+            }
 
+            body = spots;
         } catch (Exception e) {
 
             statusCode = 500;
