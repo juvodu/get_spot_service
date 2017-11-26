@@ -56,22 +56,22 @@ public class CreateFavoriteHandler implements RequestHandler<Map<String, Object>
                 User user = userService.getByHashKey(userId);
 
                 // verify that spot id and user id exist
-                if(spot != null && user != null) {
-
-                    // subscribe
-                    String subscriptionArn = notificationService.subscribeToTopic(spot.getTopicArn(), user.getPlatformEndpointArn());
-                    Subscription subscription = new Subscription();
-                    subscription.setSubscriptionArn(subscriptionArn);
-                    subscription.setTopicArn(spot.getTopicArn());
-                    subscription.setEndpointArn(user.getPlatformEndpointArn());
-                    subscription.setUserId(userId);
-                    subscriptionService.save(subscription);
-
-                    // save favorite
-                    favoriteService.save(favorite);
+                if(spot == null && user == null) {
+                    throw new IllegalArgumentException("Spot/User does not exist!");
                 }
-            }
 
+                // subscribe
+                String subscriptionArn = notificationService.subscribeToTopic(spot.getTopicArn(), user.getPlatformEndpointArn());
+                Subscription subscription = new Subscription();
+                subscription.setSubscriptionArn(subscriptionArn);
+                subscription.setTopicArn(spot.getTopicArn());
+                subscription.setEndpointArn(user.getPlatformEndpointArn());
+                subscription.setUserId(userId);
+                subscriptionService.save(subscription);
+
+                // save favorite
+                favoriteService.save(favorite);
+            }
         } catch (Exception e) {
 
             statusCode = 500;
