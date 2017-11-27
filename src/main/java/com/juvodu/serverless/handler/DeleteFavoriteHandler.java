@@ -46,6 +46,8 @@ public class DeleteFavoriteHandler implements RequestHandler<Map<String, Object>
 
             Favorite favorite = objectMapper.readValue(body.toString(), Favorite.class);
             Spot spot = spotService.getByHashKey(favorite.getSpotId());
+
+            //TODO: needs to be fixed as user with multiple devices
             Subscription subscription = subscriptionService.getByUserAndTopic(favorite.getUserId(), spot.getTopicArn());
 
             // unsubscribe

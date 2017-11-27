@@ -28,6 +28,16 @@ public class FavoriteService<T extends Favorite> extends GenericPersistenceServi
         this.databaseHelper = new DatabaseHelper();
     }
 
+    /**
+     * Get favorites by user
+     *
+     * @param userId
+     *          the user the favorites belong to
+     * @param limit
+     *          the maximum results amount
+     *
+     * @return list of favorites
+     */
     public List<T> getFavoritesByUser(String userId, int limit){
 
         String filterExpression = "userId = :val1";

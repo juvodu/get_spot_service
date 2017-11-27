@@ -75,7 +75,6 @@ public class GenericPersistenceServiceTest {
         //verify
         assertNotNull(recordResult);
         assertEquals(id, recordResult.getId());
-        assertEquals(record.getPlatformEndpointArn(), recordResult.getPlatformEndpointArn());
     }
 
     @Test
@@ -134,14 +133,14 @@ public class GenericPersistenceServiceTest {
         //setup
         UserTestModel record = createRecordWithSimpleKey();
         persistenceServiceSimpleKey.save(record);
-        record.setPlatformEndpointArn("updated-platform-endpoint");
+        String id = record.getId();
 
         //execute
         persistenceServiceSimpleKey.save(record);
 
         //verify
         User recordResult = persistenceServiceSimpleKey.getByHashKey(record.getId());
-        assertEquals("updated-platform-endpoint", recordResult.getPlatformEndpointArn());
+        assertEquals(id, recordResult.getId());
     }
 
     /**
@@ -152,7 +151,6 @@ public class GenericPersistenceServiceTest {
     private UserTestModel createRecordWithSimpleKey(){
 
         UserTestModel record = new UserTestModel();
-        record.setPlatformEndpointArn("platform-endpoint");
         return record;
     }
 

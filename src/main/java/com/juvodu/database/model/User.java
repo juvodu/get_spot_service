@@ -23,9 +23,6 @@ public class User {
     @DynamoDBAttribute
     private String email;
 
-    @DynamoDBAttribute
-    private String platformEndpointArn;
-
     public String getId() {
         return id;
     }
@@ -40,14 +37,6 @@ public class User {
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public String getPlatformEndpointArn() {
-        return platformEndpointArn;
-    }
-
-    public void setPlatformEndpointArn(String platformEndpointArn) {
-        this.platformEndpointArn = platformEndpointArn;
     }
 
     public String getEmail() {

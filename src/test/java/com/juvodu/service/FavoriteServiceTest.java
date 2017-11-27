@@ -55,6 +55,6 @@ public class FavoriteServiceTest {
         // verify
         assertNotNull(favorites);
         assertEquals(1, favorites.size());
-        assertEquals(user.getId(), favorite.getUserId());
+        assertEquals(user.getId(), favorites.get(0).getUserId());
     }
 }
