@@ -6,7 +6,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.juvodu.database.converter.ContinentTypeConverter;
-import com.juvodu.database.converter.CronDateConverter;
+import com.juvodu.database.converter.DateConverter;
 import com.juvodu.forecast.model.Forecast;
 
 import java.util.Date;
@@ -86,7 +86,7 @@ public class Spot extends BaseSpot{
 
     @JsonIgnore
     @DynamoDBAttribute // last time cron updated spot
-    @DynamoDBTypeConverted(converter = CronDateConverter.class)
+    @DynamoDBTypeConverted(converter = DateConverter.class)
     private Date cronDate;
 
     @DynamoDBIgnore // weather information will be requested on demand

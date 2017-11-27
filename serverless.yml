@@ -108,7 +108,7 @@ functions:
     handler: com.juvodu.serverless.handler.CreateDeviceHandler
     events:
       - http:
-          path: device/update
+          path: device/create
           method: post
           cors: true
           private: true
@@ -179,6 +179,23 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DeviceTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: device
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: deviceToken
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: deviceToken
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -260,6 +277,7 @@ resources:
                 - arn:aws:dynamodb:*:*:table/user*
                 - arn:aws:dynamodb:*:*:table/favorite*
                 - arn:aws:dynamodb:*:*:table/subscription*
+                - arn:aws:dynamodb:*:*:table/device*
         Roles:
           - Ref: IamRoleLambdaExecution
 

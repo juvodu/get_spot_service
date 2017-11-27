@@ -4,13 +4,14 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.juvodu.database.model.User;
+import com.juvodu.database.model.Device;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudSpotResponse;
+import com.juvodu.service.DeviceService;
 import com.juvodu.service.NotificationService;
-import com.juvodu.service.UserService;
 import org.apache.log4j.Logger;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -31,21 +32,34 @@ public class CreateDeviceHandler implements RequestHandler<Map<String, Object>, 
         //API gateway puts json POST data into a body object
         Object body = input.get("body");
 
+        DeviceService<Device> deviceService = new DeviceService(Device.class);
+        NotificationService notificationService = new NotificationService();
+
         String message = "Registered device successfully.";
         String userId = null;
         int statusCode = 200;
 
         try {
             // get parameter
+            Date date = new Date();
             JsonNode jsonNode = objectMapper.readTree(body.toString());
-            String deviceToken = jsonNode.get("deviceToken").textValue();
             userId = jsonNode.get("userId").textValue();
-            UserService<User> userService = new UserService(User.class);
-            User user = userService.getByHashKey(userId);
-            NotificationService notificationService = new NotificationService();
-            String endpointArn = notificationService.registerDeviceForPushNotification(deviceToken, user.getPlatformEndpointArn());
-            user.setPlatformEndpointArn(endpointArn);
-            userService.save(user);
+            String deviceToken = jsonNode.get("deviceToken").textValue();
+            Device device = deviceService.getByCompositeKey(userId, deviceToken);
+
+            // lazy create
+            if(device == null){
+                device = new Device();
+                device.setUserId(userId);
+                device.setDeviceToken(deviceToken);
+                device.setCreatedDate(date);
+            }
+
+            // update platform endpoint
+            String endpointArn = notificationService.registerDeviceForPushNotification(deviceToken, device.getPlatformEndpointArn());
+            device.setPlatformEndpointArn(endpointArn);
+            device.setUpdatedDate(date);
+            deviceService.save(device);
 
         }catch(Exception e){
 

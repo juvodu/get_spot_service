@@ -1,20 +1,16 @@
 package com.juvodu.database.converter;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
-import com.juvodu.database.model.Country;
-import com.juvodu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Custom date converter, which convert dates to the format yyyy-MM-dd
+ * Custom date converter, which convert dates to sum of total milliseconds since January 1, 1970
  *
  * @author Juvodu
  */
-public class CronDateConverter implements DynamoDBTypeConverter<String, Date> {
+public class DateConverter implements DynamoDBTypeConverter<String, Date> {
 
     @Override
     public String convert(Date date) {
