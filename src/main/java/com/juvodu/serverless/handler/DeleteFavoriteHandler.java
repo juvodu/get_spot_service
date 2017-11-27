@@ -12,8 +12,10 @@ import com.juvodu.service.FavoriteService;
 import com.juvodu.service.NotificationService;
 import com.juvodu.service.SpotService;
 import com.juvodu.service.SubscriptionService;
+import com.juvodu.util.Constants;
 import org.apache.log4j.Logger;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,14 +49,14 @@ public class DeleteFavoriteHandler implements RequestHandler<Map<String, Object>
             Favorite favorite = objectMapper.readValue(body.toString(), Favorite.class);
             Spot spot = spotService.getByHashKey(favorite.getSpotId());
 
-            //TODO: needs to be fixed as user with multiple devices
-            Subscription subscription = subscriptionService.getByUserAndTopic(favorite.getUserId(), spot.getTopicArn());
+            // unsubscribe user for all matching subscriptions
+            List<Subscription> subscriptions = subscriptionService.getByUserAndTopic(favorite.getUserId(), spot.getTopicArn(), Constants.MAX_SUBSCRIPTIONS_USER);
+            for(Subscription subscription : subscriptions) {
+                notificationService.unsubscribe(subscription.getSubscriptionArn());
+                subscriptionService.delete(subscription);
+            }
 
-            // unsubscribe
-            notificationService.unsubscribe(subscription.getSubscriptionArn());
-
-            // delete subscription and favorite
-            subscriptionService.delete(subscription);
+            // delete favorite
             favoriteService.delete(favorite);
 
         } catch (Exception e) {

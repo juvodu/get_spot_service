@@ -7,6 +7,7 @@ import com.juvodu.database.model.*;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudResponse;
 import com.juvodu.service.*;
+import com.juvodu.util.Constants;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -59,8 +60,8 @@ public class CreateFavoriteHandler implements RequestHandler<Map<String, Object>
                     throw new IllegalArgumentException("Spot/User does not exist!");
                 }
 
-                // subscribe all user devices
-                List<Device> devices = deviceService.getDevicesByUser(userId, 100);
+                // subscribe all user devices (max 3 devices supported)
+                List<Device> devices = deviceService.getDevicesByUser(userId, Constants.MAX_SUBSCRIPTIONS_USER);
                 for(Device device : devices) {
                     String subscriptionArn = notificationService.subscribeToTopic(spot.getTopicArn(), device.getPlatformEndpointArn());
                     Subscription subscription = new Subscription();

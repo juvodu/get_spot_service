@@ -1,9 +1,12 @@
 package com.juvodu.service;
 
 import com.juvodu.service.testmodel.SubscriptionTestModel;
+import com.juvodu.util.Constants;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -34,17 +37,23 @@ public class SubscriptionServiceTest {
     public void givenSubscriptionWhenGetByUserAndTopicThenReturnSubscription(){
 
         // setup
-        SubscriptionTestModel subscription = new SubscriptionTestModel();
-        subscription.setUserId("user");
-        subscription.setTopicArn("topic");
-        subscriptionService.save(subscription);
+        String userId = "123";
+        String topicArn = "topic";
+        SubscriptionTestModel subscription1 = new SubscriptionTestModel();
+        subscription1.setUserId(userId);
+        subscription1.setTopicArn(topicArn);
+        subscriptionService.save(subscription1);
+
+        SubscriptionTestModel subscription2 = new SubscriptionTestModel();
+        subscription2.setUserId(userId);
+        subscription2.setTopicArn(topicArn);
+        subscriptionService.save(subscription2);
         
         // execute
-        SubscriptionTestModel subscriptionResult = subscriptionService.getByUserAndTopic(subscription.getUserId(), subscription.getTopicArn());
+        List<SubscriptionTestModel> subscriptionResults = subscriptionService.getByUserAndTopic(userId, topicArn, Constants.MAX_SUBSCRIPTIONS_USER);
 
         // verify
-        assertNotNull(subscriptionResult);
-        assertEquals("user", subscriptionResult.getUserId());
-        assertEquals("topic", subscriptionResult.getTopicArn());
+        assertNotNull(subscriptionResults);
+        assertEquals(2, subscriptionResults.size());
     }
 }
