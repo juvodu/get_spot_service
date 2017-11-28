@@ -72,14 +72,6 @@ functions:
           method: post
           cors: true
           private: true
-  updateSpot:
-    handler: com.juvodu.serverless.handler.UpdateSpotHandler
-    events:
-      - http:
-          path: spot/update
-          method: post
-          cors: true
-          private: true
   getFavorite:
     handler: com.juvodu.serverless.handler.GetFavoritesHandler
     events:
