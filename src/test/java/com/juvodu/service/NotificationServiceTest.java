@@ -21,8 +21,6 @@ public class NotificationServiceTest {
 
     private static NotificationService notificationService;
     private static UserService<UserTestModel> userService;
-    private static String USERNAME = "juvodu";
-
 
     @BeforeClass
     public static void beforeClass(){
@@ -92,7 +90,7 @@ public class NotificationServiceTest {
     private UserTestModel createUser(){
 
         UserTestModel user = new UserTestModel();
-        user.setUserName(USERNAME);
+        user.setUsername(UUID.randomUUID().toString());
         return user;
     }
 }

@@ -104,11 +104,19 @@ functions:
           method: post
           cors: true
           private: true
-  registerPush:
+  createDevice:
     handler: com.juvodu.serverless.handler.CreateDeviceHandler
     events:
       - http:
           path: device/create
+          method: post
+          cors: true
+          private: true
+  createUser:
+    handler: com.juvodu.serverless.handler.CreateUserHandler
+    events:
+      - http:
+          path: user/create
           method: post
           cors: true
           private: true
