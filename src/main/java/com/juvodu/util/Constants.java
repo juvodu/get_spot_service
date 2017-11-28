@@ -14,6 +14,6 @@ public class Constants {
     public static final String CONTINENT_CRONDATE_INDEX ="continent-crondate-index";
     public static final String USER_TOPIC_INDEX ="user-topic-index";
 
-    /** number of max subscriptions per user - devices per user to receive push notifications */
-    public static final int MAX_SUBSCRIPTIONS_USER = 3;
+    /** number of max devices per user which receive push notifications */
+    public static final int MAX_USER_DEVICES = 3;
 }

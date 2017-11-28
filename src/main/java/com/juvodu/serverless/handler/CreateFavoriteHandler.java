@@ -61,7 +61,7 @@ public class CreateFavoriteHandler implements RequestHandler<Map<String, Object>
                 }
 
                 // subscribe all user devices (max 3 devices supported)
-                List<Device> devices = deviceService.getDevicesByUser(userId, Constants.MAX_SUBSCRIPTIONS_USER);
+                List<Device> devices = deviceService.getDevicesByUser(userId, Constants.MAX_USER_DEVICES);
                 for(Device device : devices) {
                     String subscriptionArn = notificationService.subscribeToTopic(spot.getTopicArn(), device.getPlatformEndpointArn());
                     Subscription subscription = new Subscription();

@@ -50,7 +50,7 @@ public class SubscriptionServiceTest {
         subscriptionService.save(subscription2);
         
         // execute
-        List<SubscriptionTestModel> subscriptionResults = subscriptionService.getByUserAndTopic(userId, topicArn, Constants.MAX_SUBSCRIPTIONS_USER);
+        List<SubscriptionTestModel> subscriptionResults = subscriptionService.getByUserAndTopic(userId, topicArn, Constants.MAX_USER_DEVICES);
 
         // verify
         assertNotNull(subscriptionResults);

@@ -50,7 +50,7 @@ public class DeleteFavoriteHandler implements RequestHandler<Map<String, Object>
             Spot spot = spotService.getByHashKey(favorite.getSpotId());
 
             // unsubscribe user for all matching subscriptions
-            List<Subscription> subscriptions = subscriptionService.getByUserAndTopic(favorite.getUserId(), spot.getTopicArn(), Constants.MAX_SUBSCRIPTIONS_USER);
+            List<Subscription> subscriptions = subscriptionService.getByUserAndTopic(favorite.getUserId(), spot.getTopicArn(), Constants.MAX_USER_DEVICES);
             for(Subscription subscription : subscriptions) {
                 notificationService.unsubscribe(subscription.getSubscriptionArn());
                 subscriptionService.delete(subscription);
