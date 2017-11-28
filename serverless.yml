@@ -112,6 +112,14 @@ functions:
           method: post
           cors: true
           private: true
+  deleteUser:
+    handler: com.juvodu.serverless.handler.DeleteUserHandler
+    events:
+      - http:
+          path: user/delete
+          method: post
+          cors: true
+          private: true
   cronSpot:
     handler: com.juvodu.serverless.handler.CronSpotHandler
     description: Scheduled Lambda to populate spots with current surf conditions
