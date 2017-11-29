@@ -197,7 +197,7 @@ public class SpotServiceTest {
         spotService.save(spot3);
 
         //execute
-        List<SpotTestModel> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 1, 1);
+        List<SpotTestModel> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 1, 100);
 
         //verify
         assertNotNull(spots);
@@ -219,8 +219,8 @@ public class SpotServiceTest {
         spotService.save(spot2);
         spotService.save(spot3);
 
-        //execute - distance between both spots is 205km
-        List<SpotTestModel> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 210, 2);
+        //execute - distance between both spots is 210km
+        List<SpotTestModel> spots = spotService.findByDistance(Continent.EU, spot1.getPosition(), 210, 100);
 
         //verify
         assertNotNull(spots);

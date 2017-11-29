@@ -10,7 +10,6 @@ public enum Continent {
     AF("Africa", "AF"),
     NA("North America", "NA"),
     OC("Oceania", "OC"),
-    AN("Antarctica", "AN"),
     AS("Asia", "AS"),
     EU("Europe", "EU"),
     SA("South America", "SA");

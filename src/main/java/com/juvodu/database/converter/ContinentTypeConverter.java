@@ -31,9 +31,6 @@ public class ContinentTypeConverter implements DynamoDBTypeConverter<String, Con
             case "OC":
                 continent = Continent.OC;
                 break;
-            case "AN":
-                continent= Continent.AN;
-                break;
             case "AS":
                 continent = Continent.AS;
                 break;

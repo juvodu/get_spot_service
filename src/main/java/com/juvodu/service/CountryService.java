@@ -31,9 +31,6 @@ public class CountryService {
         continentCountryMap.put(Continent.OC.getCode(), Arrays.asList("AS", "AU", "CK", "FJ", "FM", "GU", "KI", "MH",
                 "MP", "NC", "NF", "NR", "NU", "NZ", "PF", "PG", "PN", "PW", "SB", "TK", "TO", "TV", "UM", "VU", "WF", "WS"));
 
-        // antarctica
-        continentCountryMap.put(Continent.AN.getCode(), Arrays.asList("AQ", "BV", "GS", "HM", "TF"));
-
         // asia
         continentCountryMap.put(Continent.AS.getCode(), Arrays.asList("AE", "AF", "AM", "AZ", "BD", "BH", "BN",
                 "BT", "CC", "CN", "CX", "CY", "GE", "HK", "ID", "IL", "IN", "IO", "IQ", "IR", "JO", "JP", "KG", "KH",

@@ -12,10 +12,7 @@ import com.juvodu.service.SpotService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -102,15 +99,24 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 			Locale locale = new Locale("", country);
 			spots.addAll(baseSpotService.findByCountry(Continent.valueOf(continent), new Country(locale.getCountry(), locale.getDisplayName()), limit));
 
-		}else if (!StringUtils.isAnyBlank(continent, lat, lon, dist)){
+		}else if (!StringUtils.isAnyBlank(lat, lon, dist)){
 
 			LOG.info("Find spots by distance: " + dist + " center: " + lat + "," + lon);
 			int distance = Integer.valueOf(dist);
 			double latitude = Double.valueOf(lat);
 			double longitude = Double.valueOf(lon);
-			spots.addAll(baseSpotService.findByDistance(Continent.valueOf(continent), new Position(latitude, longitude), distance, limit));
 
-		}else if(StringUtils.isNotBlank(continent)){
+			// check all continents
+            for(Continent c : Continent.values()){
+                spots.addAll(baseSpotService.findByDistance(c, new Position(latitude, longitude), distance, limit));
+            }
+
+            // sort again by distance now for all continents
+            spots = spots.stream()
+                    .sorted(Comparator.comparing(BaseSpot::getDistance))
+                    .collect(Collectors.toList());
+
+        }else if(StringUtils.isNotBlank(continent)){
 
 			LOG.info("Find spots by continent: " + continent);
 			spots.addAll(baseSpotService.findByContinent(Continent.valueOf(continent), limit));
