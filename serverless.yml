@@ -104,6 +104,14 @@ functions:
           method: post
           cors: true
           private: true
+  getUser:
+    handler: com.juvodu.serverless.handler.GetUserHandler
+    events:
+      - http:
+          path: user
+          method: get
+          cors: true
+          private: true
   createUser:
     handler: com.juvodu.serverless.handler.CreateUserHandler
     events:
