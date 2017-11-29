@@ -38,18 +38,4 @@ public class ParameterParser {
         }
         return query_pairs;
     }
-
-    /**
-     * Parse the ids parameter
-     *
-     * @param idsStr
-     *          the string of spot ids to be parsed
-     * @return list of spot ids
-     */
-    public static List<String> getSpotIds(String idsStr){
-
-        // ids parameter format 123_456_789
-        String[] ids = idsStr.split("_");
-        return new ArrayList<>(Arrays.asList(ids));
-    }
 }

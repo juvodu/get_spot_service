@@ -7,6 +7,7 @@ import com.juvodu.forecast.exception.WWOMClientException;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudSpotResponse;
+import com.juvodu.service.FavoriteService;
 import com.juvodu.service.SpotService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Handler which retrieves a list of Spots.
@@ -63,9 +65,10 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 
 		// base spot class as list views only need partial data of a spot
 		SpotService<BaseSpot> baseSpotService = new SpotService(BaseSpot.class);
+		FavoriteService<Favorite> favoriteService = new FavoriteService<>(Favorite.class);
 		List<BaseSpot> spots = new ArrayList<>();
 
-		String ids = queryStringParametersMap.get("ids");
+		String userId = queryStringParametersMap.get("userId");
 		String continent = queryStringParametersMap.get("continent");
 		String lat = queryStringParametersMap.get("lat");
 		String lon = queryStringParametersMap.get("lon");
@@ -84,10 +87,14 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 			LOG.info("Return all spots: " + country);
 			spots.addAll(baseSpotService.findAll());
 
-		}else if(!StringUtils.isBlank(ids)) {
+		}else if(!StringUtils.isBlank(userId)) {
 
-			LOG.info("Find spots by ids: " + ids);
-			spots.addAll(baseSpotService.getByIds(ParameterParser.getSpotIds(ids)));
+			LOG.info("Find spots by user: " + userId);
+            List<Favorite> favorites = favoriteService.getFavoritesByUser(userId, limit);
+            if(favorites.size() > 0 ) {
+                List<String> spotIds = favorites.stream().map(Favorite::getSpotId).collect(Collectors.toList());
+                spots.addAll(baseSpotService.getByIds(spotIds));
+            }
 
 		}else if(!StringUtils.isAnyBlank(continent, country)){
 

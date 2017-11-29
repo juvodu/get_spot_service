@@ -72,14 +72,6 @@ functions:
           method: post
           cors: true
           private: true
-  getFavorite:
-    handler: com.juvodu.serverless.handler.GetFavoritesHandler
-    events:
-      - http:
-          path: favorites
-          method: get
-          cors: true
-          private: true
   createFavorite:
     handler: com.juvodu.serverless.handler.CreateFavoriteHandler
     events:

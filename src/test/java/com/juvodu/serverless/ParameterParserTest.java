@@ -2,7 +2,6 @@ package com.juvodu.serverless;
 
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -32,13 +31,5 @@ public class ParameterParserTest {
         String country = parameters.get("country");
         assertEquals("EU", continent);
         assertEquals("FR", country);
-    }
-
-    @Test
-    public void givenMultipleIdsWhenGetSpotIdsThenSuccess(){
-
-        String spotIdsStr = "123_456_789";
-        List<String> ids = ParameterParser.getSpotIds(spotIdsStr);
-        assertEquals(3, ids.size());
     }
 }
