@@ -79,12 +79,7 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 			limit = Integer.parseInt(limitStr);
 		}
 
-		if(queryStringParametersMap.isEmpty()){
-
-			LOG.info("Return all spots: " + country);
-			spots.addAll(baseSpotService.findAll());
-
-		}else if(!StringUtils.isBlank(userId)) {
+		if(!StringUtils.isBlank(userId)) {
 
 			LOG.info("Find spots by user: " + userId);
             List<Favorite> favorites = favoriteService.getFavoritesByUser(userId, limit);
