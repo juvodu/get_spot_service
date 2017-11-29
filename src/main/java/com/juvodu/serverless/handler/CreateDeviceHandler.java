@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.juvodu.database.model.Device;
 import com.juvodu.serverless.response.ApiGatewayResponse;
-import com.juvodu.serverless.response.CrudSpotResponse;
+import com.juvodu.serverless.response.CrudResponse;
 import com.juvodu.service.DeviceService;
 import com.juvodu.service.NotificationService;
 import org.apache.log4j.Logger;
@@ -36,14 +36,13 @@ public class CreateDeviceHandler implements RequestHandler<Map<String, Object>, 
         NotificationService notificationService = new NotificationService();
 
         String message = "Registered device successfully.";
-        String userId = null;
         int statusCode = 200;
 
         try {
             // get parameter
             Date date = new Date();
             JsonNode jsonNode = objectMapper.readTree(body.toString());
-            userId = jsonNode.get("userId").textValue();
+            String userId = jsonNode.get("userId").textValue();
             String deviceToken = jsonNode.get("deviceToken").textValue();
             Device device = deviceService.getByCompositeKey(userId, deviceToken);
 
@@ -70,7 +69,7 @@ public class CreateDeviceHandler implements RequestHandler<Map<String, Object>, 
 
         return ApiGatewayResponse.builder()
                 .setStatusCode(statusCode)
-                .setObjectBody(new CrudSpotResponse(userId, message))
+                .setObjectBody(new CrudResponse(message))
                 .build();
     }
 }

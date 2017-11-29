@@ -38,41 +38,44 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
         WeatherService weatherService = new WeatherService();
         SwellAlertService swellAlertService = new SwellAlertService();
         NotificationService notificationService = new NotificationService();
-
-        // batch size of 1000 spots
-        List<Spot> spots = spotService.findByToBeUpdated(Continent.EU);
-        LOG.info("Found " + spots.size() + " spots to update.");
-
         int updatedSpots = 0;
 
-        for (Spot spot : spots) {
+        // for all continents
+        for(Continent c : Continent.values()) {
 
-            LOG.info("Updating spot " + spot.getId());
+            // batch size of 1000 spots
+            List<Spot> spots = spotService.findByToBeUpdatedAndContinent(c);
+            LOG.info("Found " + spots.size() + " spots in " + c.getName() + " to update.");
 
-            try {
+            for (Spot spot : spots) {
 
-                Forecast forecast = weatherService.getForecastForPosition(spot.getPosition());
-                Hourly hourly = getLatestHourly(forecast);
-                spot.setSwellHeight(hourly.getSwellHeightM());
-                spot.setSwellPeriod(hourly.getSwellPeriodSecs());
-                spot.setWindspeedKmph(hourly.getWindspeedKmph());
-                spot.setWinddir16Point(hourly.getWinddir16Point());
-                updatedSpots++;
+                LOG.info("Updating forecast data of spot with id " + spot.getId());
 
-                // if nice surf conditions, notify subscribers
-                boolean isAlert = swellAlertService.checkSwellAlertForSpot(spot);
-                if(isAlert){
-                    notificationService.swellAlert(spot);
+                try {
+
+                    Forecast forecast = weatherService.getForecastForPosition(spot.getPosition());
+                    Hourly hourly = getLatestHourly(forecast);
+                    spot.setSwellHeight(hourly.getSwellHeightM());
+                    spot.setSwellPeriod(hourly.getSwellPeriodSecs());
+                    spot.setWindspeedKmph(hourly.getWindspeedKmph());
+                    spot.setWinddir16Point(hourly.getWinddir16Point());
+                    updatedSpots++;
+
+                    // if nice surf conditions, notify subscribers
+                    boolean isAlert = swellAlertService.checkSwellAlertForSpot(spot);
+                    if (isAlert) {
+                        notificationService.swellAlert(spot);
+                    }
+
+                } catch (WWOMClientException e) {
+
+                    LOG.info("Error updating spot " + spot.getId());
+                    e.printStackTrace();
                 }
 
-            } catch (WWOMClientException e) {
-
-                LOG.info("Error updating spot " + spot.getId());
-                e.printStackTrace();
+                spot.setCronDate(new Date());
+                spotService.save(spot);
             }
-
-            spot.setCronDate(new Date());
-            spotService.save(spot);
         }
 
         long endTimeMilli = System.currentTimeMillis();

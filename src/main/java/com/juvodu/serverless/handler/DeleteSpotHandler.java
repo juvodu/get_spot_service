@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.juvodu.database.model.Spot;
 import com.juvodu.serverless.response.ApiGatewayResponse;
-import com.juvodu.serverless.response.CrudSpotResponse;
+import com.juvodu.serverless.response.CrudResponse;
 import com.juvodu.service.SpotService;
 import org.apache.log4j.Logger;
 
@@ -31,14 +31,13 @@ public class DeleteSpotHandler implements RequestHandler<Map<String, Object>, Ap
         Object body = input.get("body");
 
         int statusCode = 200;
-        String id = null;
         String message = "Deleted Spot successfully.";
 
         try {
 
             // get parameter
             JsonNode jsonNode = objectMapper.readTree(body.toString());
-            id = jsonNode.get("id").textValue();
+            String id = jsonNode.get("id").textValue();
             LOG.info("Delete Spot with Id:" + id);
 
             // delete spot
@@ -49,13 +48,13 @@ public class DeleteSpotHandler implements RequestHandler<Map<String, Object>, Ap
         } catch (Exception e) {
 
             statusCode = 500;
-            message = "Error: Could not delete Spot with id " + id + ". Spot does not exist.";
+            message = "Could not delete Spot: " + e.getMessage();
             e.printStackTrace();
         }
 
         return ApiGatewayResponse.builder()
                 .setStatusCode(statusCode)
-                .setObjectBody(new CrudSpotResponse(id, message))
+                .setObjectBody(new CrudResponse(message))
                 .build();
     }
 }

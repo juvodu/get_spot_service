@@ -40,7 +40,7 @@ public class GetUserHandler implements RequestHandler<Map<String, Object>, ApiGa
         } catch (Exception e) {
 
             statusCode = 500;
-            body = new CrudResponse("Error during get user by id:" + e.getMessage());
+            body = new CrudResponse("Could not get user: " + e.getMessage());
             e.printStackTrace();
         }
 

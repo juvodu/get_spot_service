@@ -239,7 +239,7 @@ public class SpotServiceTest {
         spotService.save(spot);
 
         //execute
-        List<SpotTestModel> spots = spotService.findByToBeUpdated(Continent.EU);
+        List<SpotTestModel> spots = spotService.findByToBeUpdatedAndContinent(Continent.EU);
 
         //verify
         assertNotNull(spots);
@@ -257,7 +257,7 @@ public class SpotServiceTest {
         spotService.save(spot);
 
         //execute
-        List<SpotTestModel> spots = spotService.findByToBeUpdated(Continent.EU);
+        List<SpotTestModel> spots = spotService.findByToBeUpdatedAndContinent(Continent.EU);
 
         //verify
         assertNotNull(spots);

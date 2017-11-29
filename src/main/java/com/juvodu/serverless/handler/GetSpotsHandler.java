@@ -6,7 +6,7 @@ import com.juvodu.database.model.*;
 import com.juvodu.forecast.exception.WWOMClientException;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
-import com.juvodu.serverless.response.CrudSpotResponse;
+import com.juvodu.serverless.response.CrudResponse;
 import com.juvodu.service.FavoriteService;
 import com.juvodu.service.SpotService;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +40,7 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 		} catch (Exception e) {
 
 			statusCode = 500;
-			body = new CrudSpotResponse(queryStringParameters, "Error retrieving spots by parameter.");
+			body = new CrudResponse("Could not retrieve spots by parameter:" + e.getMessage());
 			e.printStackTrace();
 		}
 

@@ -1,15 +1,15 @@
 package com.juvodu.serverless.response;
 
 /**
- * Response for crud operations on the spot model
+ * Response for create operations
  *
  * @author Juvodu
  */
-public class CrudSpotResponse extends CrudResponse {
+public class CreateResponse extends CrudResponse {
 
     private String id;
 
-    public CrudSpotResponse(String id, String message){
+    public CreateResponse(String id, String message){
         super(message);
         this.id = id;
 

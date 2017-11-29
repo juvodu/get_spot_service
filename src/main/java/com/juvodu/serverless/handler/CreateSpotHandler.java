@@ -5,7 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.juvodu.database.model.Spot;
 import com.juvodu.serverless.response.ApiGatewayResponse;
-import com.juvodu.serverless.response.CrudSpotResponse;
+import com.juvodu.serverless.response.CreateResponse;
 import com.juvodu.service.SpotService;
 import org.apache.log4j.Logger;
 
@@ -49,7 +49,7 @@ public class CreateSpotHandler implements RequestHandler<Map<String, Object>, Ap
 
         return ApiGatewayResponse.builder()
         .setStatusCode(statusCode)
-        .setObjectBody(new CrudSpotResponse(id, message))
+        .setObjectBody(new CreateResponse(id, message))
         .build();
     }
 }

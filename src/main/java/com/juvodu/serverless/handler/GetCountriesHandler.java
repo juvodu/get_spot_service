@@ -4,7 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
-import com.juvodu.serverless.response.CrudSpotResponse;
+import com.juvodu.serverless.response.CrudResponse;
 import com.juvodu.service.CountryService;
 import org.apache.log4j.Logger;
 
@@ -40,7 +40,7 @@ public class GetCountriesHandler implements RequestHandler<Map<String, Object>, 
         } catch (Exception e) {
 
             statusCode = 500;
-            body = new CrudSpotResponse(null, "Error retrieving countries.");
+            body = new CrudResponse("Could not retrieve countries: " + e.getMessage());
             e.printStackTrace();
         }
 

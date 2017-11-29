@@ -6,7 +6,7 @@ import com.juvodu.database.model.Spot;
 import com.juvodu.forecast.model.Forecast;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
-import com.juvodu.serverless.response.CrudSpotResponse;
+import com.juvodu.serverless.response.CrudResponse;
 import com.juvodu.service.SpotService;
 import com.juvodu.service.WeatherService;
 import org.apache.log4j.Logger;
@@ -33,12 +33,11 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
         // use detailed spot class
         SpotService<Spot> spotService = new SpotService(Spot.class);
         Object body;
-        String id = null;
 
         try {
 
             Map<String, String> parameters = ParameterParser.getParameters(queryStringParameters);
-            id = parameters.get("id");
+            String id = parameters.get("id");
 
             Spot spot = spotService.getByHashKey(id);
             Forecast forecast = getForecast(spot);
@@ -49,7 +48,7 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
         } catch (Exception e) {
 
             statusCode = 500;
-            body = new CrudSpotResponse(id, "Error during get spot by id.");
+            body = new CrudResponse("Could not get spot: " + e.getMessage());
             e.printStackTrace();
         }
 

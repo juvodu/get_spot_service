@@ -40,14 +40,13 @@ public class DeleteUserHandler implements RequestHandler<Map<String, Object>, Ap
         NotificationService notificationService = new NotificationService();
 
         int statusCode = 200;
-        String userId = null;
         String message = "Deleted User successfully.";
 
         try {
 
             // get parameter
             JsonNode jsonNode = objectMapper.readTree(body.toString());
-            userId = jsonNode.get("id").textValue();
+            String userId = jsonNode.get("id").textValue();
             LOG.info("Delete User with Id:" + userId);
 
             // verify that user exists
@@ -82,7 +81,7 @@ public class DeleteUserHandler implements RequestHandler<Map<String, Object>, Ap
         } catch (Exception e) {
 
             statusCode = 500;
-            message = "Error: Could not delete User with id " + userId + ". User does not exist.";
+            message = "Error: Could not delete user: " + e.getMessage();
             e.printStackTrace();
         }
 

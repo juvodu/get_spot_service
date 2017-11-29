@@ -155,7 +155,7 @@ public class SpotService<T extends BaseSpot> extends GenericPersistenceService<T
      *              the continent in which the search takes place (partition key of continent-crondate-index table)
      * @return list of spots to be updated
      */
-    public List<T> findByToBeUpdated(Continent continent){
+    public List<T> findByToBeUpdatedAndContinent(Continent continent){
 
         long oneDayAgoMilli = (new Date()).getTime() - (24L * 60L * 60L * 1000L);
         String filterExpression = "continent = :val1 and cronDate < :val2";
