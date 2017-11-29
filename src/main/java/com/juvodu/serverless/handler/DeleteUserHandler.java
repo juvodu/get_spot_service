@@ -37,6 +37,7 @@ public class DeleteUserHandler implements RequestHandler<Map<String, Object>, Ap
         UserService<User> userService = new UserService(User.class);
         FavoriteService<Favorite> favoriteService = new FavoriteService(Favorite.class);
         SubscriptionService<Subscription> subscriptionService = new SubscriptionService(Subscription.class);
+        NotificationService notificationService = new NotificationService();
 
         int statusCode = 200;
         String userId = null;
@@ -61,11 +62,14 @@ public class DeleteUserHandler implements RequestHandler<Map<String, Object>, Ap
                 List<Favorite> favorites = favoriteService.getFavoritesByUser(userId, 100);
                 for(Favorite favorite : favorites){
 
-                    //TODO: unsubscribe from SNS
-
                     Spot spot = spotService.getByHashKey(favorite.getSpotId());
                     List<Subscription> subscriptions = subscriptionService.getByUserAndTopic(userId, spot.getTopicArn(), 100);
-                    subscriptions.stream().forEach(subscription -> subscriptionService.delete(subscription));
+                    subscriptions.stream().forEach(subscription ->
+                    {
+                        notificationService.unsubscribe(subscription.getSubscriptionArn());
+                        subscriptionService.delete(subscription);
+
+                    });
                 }
 
                 // delete all favorites
