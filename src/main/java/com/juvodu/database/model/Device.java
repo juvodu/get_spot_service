@@ -1,7 +1,8 @@
 package com.juvodu.database.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import com.juvodu.database.converter.DateConverter;
+import com.juvodu.database.converter.DateTypeConverter;
+import com.juvodu.database.converter.MobileOperatingSystemTypeConverter;
 
 import java.util.Date;
 
@@ -23,14 +24,15 @@ public class Device {
     private String platformEndpointArn;
 
     @DynamoDBAttribute
-    private String operatingSystem;
+    @DynamoDBTypeConverted(converter = MobileOperatingSystemTypeConverter.class)
+    private MobileOperatingSystem mobileOperatingSystem;
 
     @DynamoDBAttribute
-    @DynamoDBTypeConverted(converter = DateConverter.class)
+    @DynamoDBTypeConverted(converter = DateTypeConverter.class)
     private Date createdDate;
 
     @DynamoDBAttribute
-    @DynamoDBTypeConverted(converter = DateConverter.class)
+    @DynamoDBTypeConverted(converter = DateTypeConverter.class)
     private Date updatedDate;
 
     public String getUserId() {
@@ -57,12 +59,12 @@ public class Device {
         this.platformEndpointArn = platformEndpointArn;
     }
 
-    public String getOperatingSystem() {
-        return operatingSystem;
+    public MobileOperatingSystem getMobileOperatingSystem() {
+        return mobileOperatingSystem;
     }
 
-    public void setOperatingSystem(String operatingSystem) {
-        this.operatingSystem = operatingSystem;
+    public void setMobileOperatingSystem(MobileOperatingSystem mobileOperatingSystem) {
+        this.mobileOperatingSystem = mobileOperatingSystem;
     }
 
     public Date getCreatedDate() {

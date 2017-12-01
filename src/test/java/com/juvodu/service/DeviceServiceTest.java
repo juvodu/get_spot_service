@@ -1,5 +1,7 @@
 package com.juvodu.service;
 
+import com.juvodu.database.model.Device;
+import com.juvodu.database.model.MobileOperatingSystem;
 import com.juvodu.service.testmodel.DeviceTestModel;
 import com.juvodu.service.testmodel.UserTestModel;
 import org.junit.Before;
@@ -44,6 +46,7 @@ public class DeviceServiceTest {
         DeviceTestModel device = new DeviceTestModel();
         device.setUserId(user.getId());
         device.setDeviceToken("123");
+        device.setMobileOperatingSystem(MobileOperatingSystem.ANDROID);
         deviceService.save(device);
 
         // execute
@@ -52,6 +55,8 @@ public class DeviceServiceTest {
         // verify
         assertNotNull(devices);
         assertEquals(1, devices.size());
-        assertEquals(user.getId(), devices.get(0).getUserId());
+        Device resultDevice = devices.get(0);
+        assertEquals(user.getId(), resultDevice.getUserId());
+        assertEquals(MobileOperatingSystem.ANDROID, resultDevice.getMobileOperatingSystem());
     }
 }

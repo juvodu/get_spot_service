@@ -10,7 +10,7 @@ import java.util.Date;
  *
  * @author Juvodu
  */
-public class DateConverter implements DynamoDBTypeConverter<String, Date> {
+public class DateTypeConverter implements DynamoDBTypeConverter<String, Date> {
 
     @Override
     public String convert(Date date) {
