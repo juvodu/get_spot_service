@@ -92,6 +92,9 @@ public class Spot extends BaseSpot{
     @DynamoDBIgnore // weather information will be requested on demand
     private Forecast forecast;
 
+    @DynamoDBIgnore // populated on runtime for the requesting user
+    private boolean favorite;
+
     @DynamoDBAttribute
     private String topicArn;
 
@@ -284,5 +287,13 @@ public class Spot extends BaseSpot{
 
     public void setTopicArn(String topicArn) {
         this.topicArn = topicArn;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 }

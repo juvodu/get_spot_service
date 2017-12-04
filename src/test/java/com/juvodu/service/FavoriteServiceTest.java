@@ -10,7 +10,9 @@ import org.junit.Test;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test suite for the FavoriteService
@@ -56,5 +58,41 @@ public class FavoriteServiceTest {
         assertNotNull(favorites);
         assertEquals(1, favorites.size());
         assertEquals(user.getId(), favorites.get(0).getUserId());
+    }
+
+    @Test
+    public void givenUserAndSpotWhenIsSpotUserFavoriteThenReturnTrue(){
+
+        // setup
+        UserTestModel user = new UserTestModel();
+        userService.save(user);
+        FavoriteTestModel favorite = new FavoriteTestModel();
+        favorite.setUserId(user.getId());
+        favorite.setSpotId("spot");
+        favoriteService.save(favorite);
+
+        // execute
+        boolean favoriteResult = favoriteService.isSpotUserFavorite(user.getId(), "spot");
+
+        // verify
+        assertTrue(favoriteResult);
+    }
+
+    @Test
+    public void givenUserAndSpotWhenIsSpotUserFavoriteThenReturnFalse(){
+
+        // setup
+        UserTestModel user = new UserTestModel();
+        userService.save(user);
+        FavoriteTestModel favorite = new FavoriteTestModel();
+        favorite.setUserId(user.getId());
+        favorite.setSpotId("spot2");
+        favoriteService.save(favorite);
+
+        // execute
+        boolean favoriteResult = favoriteService.isSpotUserFavorite(user.getId(), "spot");
+
+        // verify
+        assertFalse(favoriteResult);
     }
 }

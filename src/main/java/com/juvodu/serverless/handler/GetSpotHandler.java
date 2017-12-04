@@ -2,11 +2,13 @@ package com.juvodu.serverless.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.juvodu.database.model.Favorite;
 import com.juvodu.database.model.Spot;
 import com.juvodu.forecast.model.Forecast;
 import com.juvodu.serverless.ParameterParser;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudResponse;
+import com.juvodu.service.FavoriteService;
 import com.juvodu.service.SpotService;
 import com.juvodu.service.WeatherService;
 import org.apache.log4j.Logger;
@@ -32,16 +34,22 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
 
         // use detailed spot class
         SpotService<Spot> spotService = new SpotService(Spot.class);
+        FavoriteService<Favorite> favoriteService = new FavoriteService(Favorite.class);
         Object body;
 
         try {
 
             Map<String, String> parameters = ParameterParser.getParameters(queryStringParameters);
-            String id = parameters.get("id");
+            String spotId = parameters.get("spotId");
+            String userId = parameters.get("userId");
 
-            Spot spot = spotService.getByHashKey(id);
+            Spot spot = spotService.getByHashKey(spotId);
             Forecast forecast = getForecast(spot);
             spot.setForecast(forecast);
+
+            // populate if spot is favorite of user
+            boolean favorite = favoriteService.isSpotUserFavorite(userId, spotId);
+            spot.setFavorite(favorite);
 
             body = spot;
 

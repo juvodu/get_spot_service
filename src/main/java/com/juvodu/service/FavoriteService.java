@@ -45,4 +45,21 @@ public class FavoriteService<T extends Favorite> extends GenericPersistenceServi
                 null, filterExpression, limit);
         return mapper.queryPage(persistenceClass, queryExpression).getResults();
     }
+
+    /**
+     * Check if a spot is a user favorite
+     *
+     * @param userId
+     *          the user the favorites belong to
+     * @param spotId
+     *           the referenced spot
+     *
+     * @return true if spot is a user favorite
+     */
+    public boolean isSpotUserFavorite(String userId, String spotId){
+
+        T favorite = getByCompositeKey(userId, spotId);
+
+        return favorite != null;
+    }
 }
