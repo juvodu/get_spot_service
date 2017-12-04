@@ -65,7 +65,7 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 		FavoriteService<Favorite> favoriteService = new FavoriteService<>(Favorite.class);
 		List<BaseSpot> spots = new ArrayList<>();
 
-		String userId = queryStringParametersMap.get("userId");
+		String username = queryStringParametersMap.get("username");
 		String continent = queryStringParametersMap.get("continent");
 		String lat = queryStringParametersMap.get("lat");
 		String lon = queryStringParametersMap.get("lon");
@@ -79,10 +79,10 @@ public class GetSpotsHandler implements RequestHandler<Map<String, Object>, ApiG
 			limit = Integer.parseInt(limitStr);
 		}
 
-		if(!StringUtils.isBlank(userId)) {
+		if(!StringUtils.isBlank(username)) {
 
-			LOG.info("Find spots by user: " + userId);
-            List<Favorite> favorites = favoriteService.getFavoritesByUser(userId, limit);
+			LOG.info("Find spots by user: " + username);
+            List<Favorite> favorites = favoriteService.getFavoritesByUser(username, limit);
             if(favorites.size() > 0 ) {
                 List<String> spotIds = favorites.stream().map(Favorite::getSpotId).collect(Collectors.toList());
                 spots.addAll(baseSpotService.getByIds(spotIds));

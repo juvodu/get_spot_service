@@ -138,7 +138,7 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: userId
+          - AttributeName: username
             AttributeType: S
           - AttributeName: topicArn
             AttributeType: S
@@ -149,9 +149,9 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         GlobalSecondaryIndexes:
-          - IndexName: user-topic-index
+          - IndexName: username-topic-index
             KeySchema:
-              - AttributeName: userId
+              - AttributeName: username
                 KeyType: HASH
               - AttributeName: topicArn
                 KeyType: RANGE
@@ -165,12 +165,12 @@ resources:
       Properties:
         TableName: favorite
         AttributeDefinitions:
-          - AttributeName: userId
+          - AttributeName: username
             AttributeType: S
           - AttributeName: spotId
             AttributeType: S
         KeySchema:
-          - AttributeName: userId
+          - AttributeName: username
             KeyType: HASH
           - AttributeName: spotId
             KeyType: RANGE
@@ -182,7 +182,7 @@ resources:
       Properties:
         TableName: user
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: username
             AttributeType: S
         KeySchema:
           - AttributeName: id
@@ -195,12 +195,12 @@ resources:
       Properties:
         TableName: device
         AttributeDefinitions:
-          - AttributeName: userId
+          - AttributeName: username
             AttributeType: S
           - AttributeName: deviceToken
             AttributeType: S
         KeySchema:
-          - AttributeName: userId
+          - AttributeName: username
             KeyType: HASH
           - AttributeName: deviceToken
             KeyType: RANGE

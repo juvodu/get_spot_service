@@ -45,15 +45,15 @@ public class CreateFavoriteHandler implements RequestHandler<Map<String, Object>
 
             // parse post and create spot
             Favorite favorite = objectMapper.readValue(body.toString(), Favorite.class);
-            String userId = favorite.getUserId();
+            String username = favorite.getUsername();
             String spotId = favorite.getSpotId();
 
             // verify that favorite does not exist yet
-            if(favoriteService.getByCompositeKey(userId, spotId) == null){
+            if(favoriteService.getByCompositeKey(username, spotId) == null){
 
                 // get topic from spot and endpoint from user
                 Spot spot = spotService.getByHashKey(spotId);
-                User user = userService.getByHashKey(userId);
+                User user = userService.getByHashKey(username);
 
                 // verify that spot id and user id exist
                 if(spot == null && user == null) {
@@ -61,14 +61,14 @@ public class CreateFavoriteHandler implements RequestHandler<Map<String, Object>
                 }
 
                 // subscribe all user devices (max 3 devices supported)
-                List<Device> devices = deviceService.getDevicesByUser(userId, Constants.MAX_USER_DEVICES);
+                List<Device> devices = deviceService.getDevicesByUser(username, Constants.MAX_USER_DEVICES);
                 for(Device device : devices) {
                     String subscriptionArn = notificationService.subscribeToTopic(spot.getTopicArn(), device.getPlatformEndpointArn());
                     Subscription subscription = new Subscription();
                     subscription.setSubscriptionArn(subscriptionArn);
                     subscription.setTopicArn(spot.getTopicArn());
                     subscription.setEndpointArn(device.getPlatformEndpointArn());
-                    subscription.setUserId(userId);
+                    subscription.setUsername(username);
                     subscriptionService.save(subscription);
                 }
 

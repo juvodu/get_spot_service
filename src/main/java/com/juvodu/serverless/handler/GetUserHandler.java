@@ -33,9 +33,9 @@ public class GetUserHandler implements RequestHandler<Map<String, Object>, ApiGa
         try {
 
             Map<String, String> parameters = ParameterParser.getParameters(queryStringParameters);
-            String id = parameters.get("id");
+            String username = parameters.get("username");
 
-            body = userService.getByHashKey(id);
+            body = userService.getByHashKey(username);
 
         } catch (Exception e) {
 

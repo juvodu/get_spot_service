@@ -42,21 +42,22 @@ public class DeviceServiceTest {
 
         // setup
         UserTestModel user = new UserTestModel();
+        user.setUsername("user");
         userService.save(user);
         DeviceTestModel device = new DeviceTestModel();
-        device.setUserId(user.getId());
+        device.setUsername(user.getUsername());
         device.setDeviceToken("123");
         device.setMobileOperatingSystem(MobileOperatingSystem.ANDROID);
         deviceService.save(device);
 
         // execute
-        List<DeviceTestModel> devices = deviceService.getDevicesByUser(user.getId(), 100);
+        List<DeviceTestModel> devices = deviceService.getDevicesByUser(user.getUsername(), 100);
 
         // verify
         assertNotNull(devices);
         assertEquals(1, devices.size());
         Device resultDevice = devices.get(0);
-        assertEquals(user.getId(), resultDevice.getUserId());
+        assertEquals(user.getUsername(), resultDevice.getUsername());
         assertEquals(MobileOperatingSystem.ANDROID, resultDevice.getMobileOperatingSystem());
     }
 }

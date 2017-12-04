@@ -42,14 +42,14 @@ public class CreateDeviceHandler implements RequestHandler<Map<String, Object>, 
             // get parameter
             Date date = new Date();
             JsonNode jsonNode = objectMapper.readTree(body.toString());
-            String userId = jsonNode.get("userId").textValue();
+            String username = jsonNode.get("username").textValue();
             String deviceToken = jsonNode.get("deviceToken").textValue();
-            Device device = deviceService.getByCompositeKey(userId, deviceToken);
+            Device device = deviceService.getByCompositeKey(username, deviceToken);
 
             // lazy create
             if(device == null){
                 device = new Device();
-                device.setUserId(userId);
+                device.setUsername(username);
                 device.setDeviceToken(deviceToken);
                 device.setCreatedDate(date);
             }

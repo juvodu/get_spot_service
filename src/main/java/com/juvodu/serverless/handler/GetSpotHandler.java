@@ -41,14 +41,14 @@ public class GetSpotHandler implements RequestHandler<Map<String, Object>, ApiGa
 
             Map<String, String> parameters = ParameterParser.getParameters(queryStringParameters);
             String spotId = parameters.get("spotId");
-            String userId = parameters.get("userId");
+            String username = parameters.get("username");
 
             Spot spot = spotService.getByHashKey(spotId);
             Forecast forecast = getForecast(spot);
             spot.setForecast(forecast);
 
             // populate if spot is favorite of user
-            boolean favorite = favoriteService.isSpotUserFavorite(userId, spotId);
+            boolean favorite = favoriteService.isSpotUserFavorite(username, spotId);
             spot.setFavorite(favorite);
 
             body = spot;

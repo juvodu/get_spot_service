@@ -33,7 +33,7 @@ public class SubscriptionService<T extends Subscription> extends GenericPersiste
      * Find all subscriptions of a specific user to a topic
      * (a user can have multiple devices and therefore multiple subscription to the same topic)
      *
-     * @param userId
+     * @param username
      *           the user who subscribed
      * @param topicArn
      *            the topic the subscription relates to
@@ -42,11 +42,11 @@ public class SubscriptionService<T extends Subscription> extends GenericPersiste
      *
      * @return list of subscriptions
      */
-    public List<T> getByUserAndTopic(String userId, String topicArn, int limit){
+    public List<T> getByUserAndTopic(String username, String topicArn, int limit){
 
-        String filterExpression = "userId = :val1 and topicArn = :val2";
-        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(userId,
-                topicArn, Constants.USER_TOPIC_INDEX, filterExpression, limit);
+        String filterExpression = "username = :val1 and topicArn = :val2";
+        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(username,
+                topicArn, Constants.USERNAME_TOPIC_INDEX, filterExpression, limit);
 
         return mapper.queryPage(persistenceClass, queryExpression).getResults();
     }

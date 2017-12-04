@@ -40,12 +40,12 @@ public class SubscriptionServiceTest {
         String userId = "123";
         String topicArn = "topic";
         SubscriptionTestModel subscription1 = new SubscriptionTestModel();
-        subscription1.setUserId(userId);
+        subscription1.setUsername(userId);
         subscription1.setTopicArn(topicArn);
         subscriptionService.save(subscription1);
 
         SubscriptionTestModel subscription2 = new SubscriptionTestModel();
-        subscription2.setUserId(userId);
+        subscription2.setUsername(userId);
         subscription2.setTopicArn(topicArn);
         subscriptionService.save(subscription2);
         

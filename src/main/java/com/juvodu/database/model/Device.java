@@ -15,7 +15,7 @@ import java.util.Date;
 public class Device {
 
     @DynamoDBHashKey
-    private String userId;
+    private String username;
 
     @DynamoDBRangeKey
     private String deviceToken;
@@ -35,12 +35,12 @@ public class Device {
     @DynamoDBTypeConverted(converter = DateTypeConverter.class)
     private Date updatedDate;
 
-    public String getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getDeviceToken() {

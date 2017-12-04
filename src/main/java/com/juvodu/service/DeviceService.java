@@ -31,17 +31,17 @@ public class DeviceService <T extends Device> extends GenericPersistenceService<
     /**
      * Get devices by user
      *
-     * @param userId
+     * @param username
      *          the user the devices belong to
      * @param limit
      *          the maximum results amount
      *
      * @return list of devices
      */
-    public List<T> getDevicesByUser(String userId, int limit){
+    public List<T> getDevicesByUser(String username, int limit){
 
-        String filterExpression = "userId = :val1";
-        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(userId,
+        String filterExpression = "username = :val1";
+        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createQueryExpression(username,
                 null, filterExpression, limit);
         return mapper.queryPage(persistenceClass, queryExpression).getResults();
     }

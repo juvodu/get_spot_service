@@ -14,18 +14,18 @@ public class Favorite {
 
     /** the id of the user which the favorite belongs to. */
     @DynamoDBHashKey
-    private String userId;
+    private String username;
 
     /** the id of the spot the user likes. */
     @DynamoDBRangeKey
     private String spotId;
 
-    public String getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(String usedId) {
-        this.userId = usedId;
+    public void setUsername(String usedId) {
+        this.username = usedId;
     }
 
     public String getSpotId() {

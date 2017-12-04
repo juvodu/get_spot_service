@@ -45,19 +45,20 @@ public class FavoriteServiceTest {
 
         // setup
         UserTestModel user = new UserTestModel();
+        user.setUsername("user");
         userService.save(user);
         FavoriteTestModel favorite = new FavoriteTestModel();
-        favorite.setUserId(user.getId());
+        favorite.setUsername(user.getUsername());
         favorite.setSpotId("spot");
         favoriteService.save(favorite);
 
         // execute
-        List<FavoriteTestModel> favorites = favoriteService.getFavoritesByUser(user.getId(), 100);
+        List<FavoriteTestModel> favorites = favoriteService.getFavoritesByUser(user.getUsername(), 100);
 
         // verify
         assertNotNull(favorites);
         assertEquals(1, favorites.size());
-        assertEquals(user.getId(), favorites.get(0).getUserId());
+        assertEquals(user.getUsername(), favorites.get(0).getUsername());
     }
 
     @Test
@@ -65,14 +66,15 @@ public class FavoriteServiceTest {
 
         // setup
         UserTestModel user = new UserTestModel();
+        user.setUsername("user");
         userService.save(user);
         FavoriteTestModel favorite = new FavoriteTestModel();
-        favorite.setUserId(user.getId());
+        favorite.setUsername(user.getUsername());
         favorite.setSpotId("spot");
         favoriteService.save(favorite);
 
         // execute
-        boolean favoriteResult = favoriteService.isSpotUserFavorite(user.getId(), "spot");
+        boolean favoriteResult = favoriteService.isSpotUserFavorite(user.getUsername(), "spot");
 
         // verify
         assertTrue(favoriteResult);
@@ -83,14 +85,15 @@ public class FavoriteServiceTest {
 
         // setup
         UserTestModel user = new UserTestModel();
+        user.setUsername("user");
         userService.save(user);
         FavoriteTestModel favorite = new FavoriteTestModel();
-        favorite.setUserId(user.getId());
+        favorite.setUsername(user.getUsername());
         favorite.setSpotId("spot2");
         favoriteService.save(favorite);
 
         // execute
-        boolean favoriteResult = favoriteService.isSpotUserFavorite(user.getId(), "spot");
+        boolean favoriteResult = favoriteService.isSpotUserFavorite(user.getUsername(), "spot");
 
         // verify
         assertFalse(favoriteResult);

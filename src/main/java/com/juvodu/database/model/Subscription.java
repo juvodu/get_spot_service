@@ -19,7 +19,7 @@ public class Subscription {
 
     /** the user which subscribed. */
     @DynamoDBAttribute
-    private String userId;
+    private String username;
 
     /** the sns topic to which the user subscribed. */
     @DynamoDBAttribute
@@ -41,12 +41,12 @@ public class Subscription {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getTopicArn() {

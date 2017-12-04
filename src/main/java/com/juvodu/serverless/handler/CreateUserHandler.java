@@ -30,7 +30,7 @@ public class CreateUserHandler implements RequestHandler<Map<String, Object>, Ap
         Object body = input.get("body");
 
         String message = "Created User successfully.";
-        String id = null;
+        String username = null;
         int statusCode = 200;
 
         try {
@@ -39,7 +39,7 @@ public class CreateUserHandler implements RequestHandler<Map<String, Object>, Ap
             User user = objectMapper.readValue(body.toString(), User.class);
             UserService<User> userService = new UserService(User.class);
             userService.save(user);
-            id = user.getId();
+            username = user.getUsername();
 
         }catch(Exception e){
 
@@ -50,7 +50,7 @@ public class CreateUserHandler implements RequestHandler<Map<String, Object>, Ap
 
         return ApiGatewayResponse.builder()
                 .setStatusCode(statusCode)
-                .setObjectBody(new CreateResponse(id, message))
+                .setObjectBody(new CreateResponse(username, message))
                 .build();
     }
 }

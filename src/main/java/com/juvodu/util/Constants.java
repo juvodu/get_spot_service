@@ -12,7 +12,7 @@ public class Constants {
     public static final String CONTINENT_COUNTRY_INDEX = "continent-country-index";
     public static final String CONTINENT_GEOHASH_INDEX = "continent-geohash-index";
     public static final String CONTINENT_CRONDATE_INDEX ="continent-crondate-index";
-    public static final String USER_TOPIC_INDEX ="user-topic-index";
+    public static final String USERNAME_TOPIC_INDEX ="username-topic-index";
 
     /** number of max devices per user which receive push notifications */
     public static final int MAX_USER_DEVICES = 3;

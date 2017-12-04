@@ -46,23 +46,23 @@ public class DeleteUserHandler implements RequestHandler<Map<String, Object>, Ap
 
             // get parameter
             JsonNode jsonNode = objectMapper.readTree(body.toString());
-            String userId = jsonNode.get("id").textValue();
-            LOG.info("Delete User with Id:" + userId);
+            String username = jsonNode.get("username").textValue();
+            LOG.info("Delete User with Id:" + username);
 
             // verify that user exists
-            User user = userService.getByHashKey(userId);
+            User user = userService.getByHashKey(username);
             if(user != null) {
 
                 // delete all user devices
-                List<Device> devices = deviceService.getDevicesByUser(userId, Constants.MAX_USER_DEVICES);
+                List<Device> devices = deviceService.getDevicesByUser(username, Constants.MAX_USER_DEVICES);
                 devices.stream().forEach(device -> deviceService.delete(device));
 
                 // delete all subscriptions
-                List<Favorite> favorites = favoriteService.getFavoritesByUser(userId, 100);
+                List<Favorite> favorites = favoriteService.getFavoritesByUser(username, 100);
                 for(Favorite favorite : favorites){
 
                     Spot spot = spotService.getByHashKey(favorite.getSpotId());
-                    List<Subscription> subscriptions = subscriptionService.getByUserAndTopic(userId, spot.getTopicArn(), 100);
+                    List<Subscription> subscriptions = subscriptionService.getByUserAndTopic(username, spot.getTopicArn(), 100);
                     subscriptions.stream().forEach(subscription ->
                     {
                         notificationService.unsubscribe(subscription.getSubscriptionArn());

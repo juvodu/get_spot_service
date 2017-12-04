@@ -67,14 +67,14 @@ public class GenericPersistenceServiceTest {
         //setup
         UserTestModel record = createRecordWithSimpleKey();
         persistenceServiceSimpleKey.save(record);
-        String id = record.getId();
+        String id = record.getUsername();
 
         //execute
         User recordResult = persistenceServiceSimpleKey.getByHashKey(id);
 
         //verify
         assertNotNull(recordResult);
-        assertEquals(id, recordResult.getId());
+        assertEquals(id, recordResult.getUsername());
     }
 
     @Test
@@ -82,16 +82,16 @@ public class GenericPersistenceServiceTest {
 
         //setup
         FavoriteTestModel record = new FavoriteTestModel();
-        record.setUserId("user");
+        record.setUsername("user");
         record.setSpotId("spot");
         persistenceServiceCompositeKey.save(record);
 
         //execute
-        Favorite favoriteResult = persistenceServiceCompositeKey.getByCompositeKey(record.getUserId(), record.getSpotId());
+        Favorite favoriteResult = persistenceServiceCompositeKey.getByCompositeKey(record.getUsername(), record.getSpotId());
 
         //verify
         assertNotNull(favoriteResult);
-        assertEquals("user", favoriteResult.getUserId());
+        assertEquals("user", favoriteResult.getUsername());
         assertEquals("spot", favoriteResult.getSpotId());
     }
 
@@ -100,11 +100,11 @@ public class GenericPersistenceServiceTest {
 
         //setup
         FavoriteTestModel record  = new FavoriteTestModel();
-        record.setUserId("user");
+        record.setUsername("user");
         record.setSpotId("spot");
 
         // execute
-        FavoriteTestModel favoriteResult = persistenceServiceCompositeKey.getByCompositeKey(record.getUserId(), record.getSpotId());
+        FavoriteTestModel favoriteResult = persistenceServiceCompositeKey.getByCompositeKey(record.getUsername(), record.getSpotId());
 
         // verify
         assertNull(favoriteResult);
@@ -115,7 +115,9 @@ public class GenericPersistenceServiceTest {
 
         //setup
         UserTestModel record1 = createRecordWithSimpleKey();
+        record1.setUsername("user1");
         UserTestModel record2 = createRecordWithSimpleKey();
+        record2.setUsername("user2");
         persistenceServiceSimpleKey.save(record1);
         persistenceServiceSimpleKey.save(record2);
 
@@ -133,14 +135,14 @@ public class GenericPersistenceServiceTest {
         //setup
         UserTestModel record = createRecordWithSimpleKey();
         persistenceServiceSimpleKey.save(record);
-        String id = record.getId();
+        String id = record.getUsername();
 
         //execute
         persistenceServiceSimpleKey.save(record);
 
         //verify
-        User recordResult = persistenceServiceSimpleKey.getByHashKey(record.getId());
-        assertEquals(id, recordResult.getId());
+        User recordResult = persistenceServiceSimpleKey.getByHashKey(record.getUsername());
+        assertEquals(id, recordResult.getUsername());
     }
 
     /**
@@ -151,6 +153,7 @@ public class GenericPersistenceServiceTest {
     private UserTestModel createRecordWithSimpleKey(){
 
         UserTestModel record = new UserTestModel();
+        record.setUsername("user");
         return record;
     }
 
