@@ -16,3 +16,4 @@ spot-service.iml
 # Serverless directories
 .serverless
 spot_service.iml
+.DS_Store
