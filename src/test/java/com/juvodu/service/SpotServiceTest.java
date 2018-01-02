@@ -125,22 +125,35 @@ public class SpotServiceTest {
     }
 
     @Test
+    public void givenNonExistingSpotWhenGetSpotsByIdsThenReturnEmptyList(){
+
+        //setup
+        List<String> ids = new ArrayList<>();
+        ids.add("non-existent-id");
+
+        // execute
+        List<SpotTestModel> spots = spotService.getByIds(ids);
+
+        // verify
+        assertEquals(0, spots.size());
+    }
+
+    @Test
     public void given2ExistingSpotWhenGetSpotsByIdsThenSuccess(){
 
         //setup
         Spot spotEU = createSpot(Continent.EU, france, hossegor);
         Spot spotNA = createSpot(Continent.NA, us, hermosa);
         List<String> ids = new ArrayList<>();
-
-        //execute
         spotService.save(spotEU);
         spotService.save(spotNA);
-
-        //verify
         ids.add(spotEU.getId());
         ids.add(spotNA.getId());
+
+        // execute
         List<SpotTestModel> spots = spotService.getByIds(ids);
 
+        //verify
         assertEquals(2, spots.size());
         for(Spot spot : spots){
             assertNotNull(spot);

@@ -90,7 +90,10 @@ public class GenericPersistenceService<T> {
 
         List<T> records = new ArrayList<>();
         for(String id : ids){
-            records.add(getByHashKey(id));
+            T record = getByHashKey(id);
+            if(record != null) {
+                records.add(record);
+            }
         }
         return records;
     }
