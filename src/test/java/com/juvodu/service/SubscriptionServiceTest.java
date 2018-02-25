@@ -50,10 +50,32 @@ public class SubscriptionServiceTest {
         subscriptionService.save(subscription2);
         
         // execute
-        List<SubscriptionTestModel> subscriptionResults = subscriptionService.getByUserAndTopic(userId, topicArn, Constants.MAX_USER_DEVICES);
+        List<SubscriptionTestModel> subscriptionResults = subscriptionService.getByUserAndTopic(userId, topicArn, 100);
 
         // verify
         assertNotNull(subscriptionResults);
         assertEquals(2, subscriptionResults.size());
+    }
+
+    @Test
+    public void givenSubscriptionWhenGetByUserAndPlatformEndpointArnThenReturnSubscription(){
+
+        // setup
+        String userId = "123";
+        String endpointArn = "456";
+        SubscriptionTestModel subscription = new SubscriptionTestModel();
+        subscription.setUsername(userId);
+        subscription.setEndpointArn(endpointArn);
+        subscriptionService.save(subscription);
+
+        // execute
+        List<SubscriptionTestModel> subscriptionResults = subscriptionService.getByUserAndPlatformEndpointArn(userId, endpointArn, 100);
+
+        // verify
+        assertNotNull(subscriptionResults);
+        assertEquals(1, subscriptionResults.size());
+        SubscriptionTestModel result = subscriptionResults.get(0);
+        assertEquals(userId, result.getUsername());
+        assertEquals(endpointArn, result.getEndpointArn());
     }
 }

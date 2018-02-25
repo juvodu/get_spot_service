@@ -5,12 +5,16 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.juvodu.database.model.Device;
+import com.juvodu.database.model.Subscription;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudResponse;
 import com.juvodu.service.DeviceService;
 import com.juvodu.service.NotificationService;
+import com.juvodu.service.SubscriptionService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,6 +36,7 @@ public class DeleteDeviceHandler implements RequestHandler<Map<String, Object>, 
         Object body = input.get("body");
 
         DeviceService<Device> deviceService = new DeviceService(Device.class);
+        SubscriptionService<Subscription> subscriptionService = new SubscriptionService(Subscription.class);
         NotificationService notificationService = new NotificationService();
 
         int statusCode = 200;
@@ -44,14 +49,25 @@ public class DeleteDeviceHandler implements RequestHandler<Map<String, Object>, 
             String username = jsonNode.get("username").textValue();
             String deviceToken = jsonNode.get("deviceToken").textValue();
             Device device = deviceService.getByCompositeKey(username, deviceToken);
+            String endpoint = device.getPlatformEndpointArn();
 
-            //TODO: delete subscriptions from DB and delete from AWS
+            if(device != null && StringUtils.isNotBlank(endpoint)) {
 
-            // delete platform endpoint
-            notificationService.deletePlatformEndpoint(device.getPlatformEndpointArn());
+                // delete SNS subscriptions for device
+                List<Subscription> subscriptions = subscriptionService.getByUserAndPlatformEndpointArn(username, endpoint, 100);
+                subscriptions.stream().forEach(subscription ->
+                {
+                    notificationService.unsubscribe(subscription.getSubscriptionArn());
+                    subscriptionService.delete(subscription);
 
-            // delete device
-            deviceService.delete(device);
+                });
+
+                // delete platform endpoint
+                notificationService.deletePlatformEndpoint(device.getPlatformEndpointArn());
+
+                // delete device
+                deviceService.delete(device);
+            }
 
         } catch (Exception e) {
 

@@ -50,4 +50,26 @@ public class SubscriptionService<T extends Subscription> extends GenericPersiste
 
         return mapper.queryPage(persistenceClass, queryExpression).getResults();
     }
+
+    /**
+     * Find all subscriptions of a specific user with a device (endpoint)
+     * (a user can have multiple devices and therefore multiple subscription to the same topic)
+     *
+     * @param username
+     *           the user who subscribed
+     * @param endpointArn
+     *            the endpoint representing the device
+     * @param limit
+     *          the maximum results amount
+     *
+     * @return list of subscriptions
+     */
+    public List<T> getByUserAndPlatformEndpointArn(String username, String endpointArn, int limit){
+
+        String filterExpression = "username = :val1 and endpointArn = :val2";
+        DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(username,
+                endpointArn, Constants.USERNAME_ENDPOINT_INDEX, filterExpression, limit);
+
+        return mapper.queryPage(persistenceClass, queryExpression).getResults();
+    }
 }

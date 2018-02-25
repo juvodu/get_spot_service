@@ -151,6 +151,8 @@ resources:
             AttributeType: S
           - AttributeName: topicArn
             AttributeType: S
+          - AttributeName: endpointArn
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
@@ -163,6 +165,17 @@ resources:
               - AttributeName: username
                 KeyType: HASH
               - AttributeName: topicArn
+                KeyType: RANGE
+            Projection:
+                ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          - IndexName: username-endpoint-index
+            KeySchema:
+              - AttributeName: username
+                KeyType: HASH
+              - AttributeName: endpointArn
                 KeyType: RANGE
             Projection:
                 ProjectionType: ALL
