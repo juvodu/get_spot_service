@@ -11,23 +11,22 @@ import com.juvodu.service.DeviceService;
 import com.juvodu.service.NotificationService;
 import org.apache.log4j.Logger;
 
-import java.util.Date;
 import java.util.Map;
 
 /**
- * Handler for registering a new device with push notifications
+ * Handler to delete an existing device.
  *
  * @author Juvodu
  */
-public class CreateDeviceHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class DeleteDeviceHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-    private static final Logger LOG = Logger.getLogger(CreateDeviceHandler.class);
+    private static final Logger LOG = Logger.getLogger(DeleteDeviceHandler.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
-        LOG.info("Register device for push notification:" + input);
+        LOG.info("Delete Device:" + input);
 
         //API gateway puts json POST data into a body object
         Object body = input.get("body");
@@ -35,35 +34,29 @@ public class CreateDeviceHandler implements RequestHandler<Map<String, Object>, 
         DeviceService<Device> deviceService = new DeviceService(Device.class);
         NotificationService notificationService = new NotificationService();
 
-        String message = "Created device successfully to receive push notifications.";
         int statusCode = 200;
+        String message = "Deleted Device successfully. No more push notifications will be send.";
 
         try {
+
             // get parameter
-            Date date = new Date();
             JsonNode jsonNode = objectMapper.readTree(body.toString());
             String username = jsonNode.get("username").textValue();
             String deviceToken = jsonNode.get("deviceToken").textValue();
             Device device = deviceService.getByCompositeKey(username, deviceToken);
 
-            // lazy create
-            if(device == null) {
-                device = new Device();
-                device.setUsername(username);
-                device.setDeviceToken(deviceToken);
-                device.setCreatedDate(date);
-            }
+            //TODO: delete subscriptions from DB and delete from AWS
 
-            // update platform endpoint - platform endpoint is null upon first registration
-            String endpointArn = notificationService.registerDeviceForPushNotification(deviceToken, device.getPlatformEndpointArn());
-            device.setPlatformEndpointArn(endpointArn);
-            device.setUpdatedDate(date);
-            deviceService.save(device);
+            // delete platform endpoint
+            notificationService.deletePlatformEndpoint(device.getPlatformEndpointArn());
 
-        }catch(Exception e){
+            // delete device
+            deviceService.delete(device);
+
+        } catch (Exception e) {
 
             statusCode = 500;
-            message = "Error: Could not register device due to: " + e.getMessage();
+            message = "Error: Could not delete device: " + e.getMessage();
             e.printStackTrace();
         }
 

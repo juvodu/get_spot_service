@@ -21,6 +21,7 @@ provider:
      Action:
        - "SNS:GetEndpointAttributes"
        - "SNS:CreatePlatformEndpoint"
+       - "SNS:DeleteEndpoint"
        - "SNS:CreateTopic"
        - "SNS:Subscribe"
        - "SNS:Unsubscribe"
@@ -93,6 +94,14 @@ functions:
     events:
       - http:
           path: device/create
+          method: post
+          cors: true
+          private: true
+  deleteDevice:
+    handler: com.juvodu.serverless.handler.DeleteDeviceHandler
+    events:
+      - http:
+          path: device/delete
           method: post
           cors: true
           private: true

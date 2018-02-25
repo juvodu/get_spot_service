@@ -46,8 +46,8 @@ public class NotificationService {
         boolean createNeeded = (null == endpointArn);
 
         if (createNeeded) {
-            // No platform endpoint ARN is stored; need to call createEndpoint.
-            endpointArn = createEndpoint(deviceToken);
+            // No platform endpoint ARN is stored; need to call createPlatformEndpoint.
+            endpointArn = createPlatformEndpoint(deviceToken);
             createNeeded = false;
         }
 
@@ -67,7 +67,7 @@ public class NotificationService {
         }
 
         if (createNeeded) {
-            endpointArn = createEndpoint(deviceToken);
+            endpointArn = createPlatformEndpoint(deviceToken);
         }
 
 
@@ -87,7 +87,7 @@ public class NotificationService {
      *
      * @return the created endpoint but never null
      */
-    private String createEndpoint(String deviceToken) {
+    private String createPlatformEndpoint(String deviceToken) {
 
         String endpointArn = null;
 
@@ -109,7 +109,7 @@ public class NotificationService {
             if (m.matches()) {
                 // The platform endpoint already exists for this token, but with
                 // additional custom data that
-                // createEndpoint doesn't want to overwrite. Just use the
+                // createPlatformEndpoint doesn't want to overwrite. Just use the
                 // existing platform endpoint.
                 endpointArn = m.group(1);
             } else {
@@ -118,6 +118,19 @@ public class NotificationService {
             }
         }
         return endpointArn;
+    }
+
+    /**
+     * Delete a platform endpoint from AWS
+     *
+     * @param endpointArn
+     *          the endpoint to delete
+     */
+    public void deletePlatformEndpoint(String endpointArn){
+
+        DeleteEndpointRequest deReq = new DeleteEndpointRequest()
+                .withEndpointArn(endpointArn);
+        DeleteEndpointResult deRes = snsClient.deleteEndpoint(deReq);
     }
 
     /**
@@ -185,7 +198,7 @@ public class NotificationService {
      * @param platform
      *              of the mobile device, currently only android supported
      * @param endpointArn
-     *              of the mobile device
+     *              of the mobile device or topic
      * @param subject
      *              subject of the notification
      * @param messageText
