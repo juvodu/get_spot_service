@@ -84,7 +84,6 @@ public class Spot extends BaseSpot{
     @DynamoDBAttribute
     private String weekEndCrowd;
 
-    @JsonIgnore
     @DynamoDBAttribute // last time cron updated spot
     @DynamoDBTypeConverted(converter = DateTypeConverter.class)
     private Date cronDate;
