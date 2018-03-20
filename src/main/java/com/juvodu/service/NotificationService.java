@@ -4,6 +4,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.*;
+import com.juvodu.database.model.BaseSpot;
 import com.juvodu.database.model.Platform;
 import com.juvodu.database.model.Spot;
 import com.juvodu.util.Constants;
@@ -177,10 +178,10 @@ public class NotificationService {
     }
 
     /**
-     * Notify subscribers of spot conditions
+     * Notify subscribers about surf conditions at the subscribed spot
      *
      * @param spot
-     *          to which users have subscribed
+     *          to which users have subscribed and the swell alert relates to
      */
     public void swellAlert(Spot spot){
 
@@ -188,8 +189,26 @@ public class NotificationService {
 
         // push message to topic
         if(StringUtils.isNotBlank(topicArn)) {
-            pushNotification(Platform.GCM, topicArn, "Nice swell alert!", "Dude, its on @ " + spot.getName());
+            swellNotification(Platform.GCM, topicArn, spot);
         }
+    }
+
+    /**
+     *
+     * Publish a message to a endpoint arn (a single mobile device)
+     *
+     * @param platform
+     *              of the mobile device, currently only android supported
+     * @param endpointArn
+     *              of the mobile device or topic
+     * @param spot
+     *             the spot the alert relates to
+     *
+     * @return id of the created message or null if failure
+     */
+    public String swellNotification(Platform platform, String endpointArn, BaseSpot spot){
+
+        return swellNotification(platform, endpointArn, null, spot);
     }
 
     /**
@@ -199,14 +218,14 @@ public class NotificationService {
      *              of the mobile device, currently only android supported
      * @param endpointArn
      *              of the mobile device or topic
-     * @param subject
-     *              subject of the notification
-     * @param messageText
-     *              the message text
+     * @param collapseKey
+     *            the collapseKey used for the notification, notifications with the same collapse key are replaced by newer notifications
+     * @param spot
+     *              the spot the alert relates to
      *
      * @return id of the created message or null if failure
      */
-    public String pushNotification(Platform platform, String endpointArn, String subject, String messageText){
+    public String swellNotification(Platform platform, String endpointArn, String collapseKey, BaseSpot spot){
 
         PublishRequest publishRequest = new PublishRequest();
         publishRequest.setMessageStructure("json");
@@ -216,7 +235,7 @@ public class NotificationService {
         String message = null;
         switch (platform){
             case GCM:
-                message = getAndroidMessageBody(subject, messageText);
+                message = getAndroidNotificationBodyForSwellAlert(collapseKey, spot);
                 break;
             default:
                 throw new IllegalArgumentException("Platform not supported : "
@@ -224,6 +243,11 @@ public class NotificationService {
         }
 
         messageMap.put(platform.name(), message);
+        // @see: https://docs.aws.amazon.com/sns/latest/dg/mobile-push-send-custommessage.html
+        // This is the default message which must be present when publishing a message to a topic.
+        // The default message will only be used if a message is not present for
+        // one of the notification platforms.
+        messageMap.put("default", "Swell Alert for " + spot.getName());
         message = JsonHelper.jsonify(messageMap);
 
         publishRequest.setTargetArn(endpointArn);
@@ -235,34 +259,40 @@ public class NotificationService {
 
     /**
      * Creates a message JSON structure for android devices and sets the attributes of the push notification
+     * @see  <a href="https://developers.google.com/cloud-messaging/http-server-ref">GCM</a>
      *
-     * @param subject
-     *            the subject used for the notification
-     * @param messageText
-     *            the message text used for the notification
+     * @param collapseKey
+     *            the collapseKey used for the notification, notifications with the same collapse key are replaced by newer notifications
+     * @param spot
+     *            the spot the alert relates to
      *
      * @return the populated JSON message
      */
-    private String getAndroidMessageBody(String subject, String messageText) {
+    private String getAndroidNotificationBodyForSwellAlert(String collapseKey, BaseSpot spot) {
 
         Map<String, Object> androidMessageMap = new HashMap<>();
-        androidMessageMap.put("collapse_key", subject);
-        androidMessageMap.put("data", getData(messageText));
-        androidMessageMap.put("delay_while_idle", true);
-        androidMessageMap.put("time_to_live", 500);
-        androidMessageMap.put("dry_run", false);
+        if(StringUtils.isNotBlank(collapseKey)) {
+            androidMessageMap.put("collapse_key", collapseKey);
+        }
+        androidMessageMap.put("data", getDataForSwellAlert(spot));
         return JsonHelper.jsonify(androidMessageMap);
     }
 
     /**
-     * Set platform independent the message text parameter
-     * @param messageText
-     *              to set
-     * @return the message as a JSON parameter
+     * Creates a map with custom values inside the data object
+     *
+     * @param spot
+     *          to which the swell alert relates to
+     *
+     * @return map of custom values for a swell alert
      */
-    private Map<String, String> getData(String messageText) {
+    private Map<String, String> getDataForSwellAlert(BaseSpot spot){
+
         Map<String, String> payload = new HashMap<>();
-        payload.put("message", messageText);
+        payload.put("message", "Swell Alert for " + spot.getName());
+        payload.put("spotId", spot.getId());
+        payload.put("notification_type", "swell_alert");
+
         return payload;
     }
 }
