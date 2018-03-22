@@ -1,6 +1,7 @@
 package com.juvodu.service;
 
 import com.juvodu.database.model.Platform;
+import com.juvodu.database.model.Spot;
 import com.juvodu.service.testmodel.UserTestModel;
 import com.juvodu.util.Constants;
 import org.junit.Before;
@@ -62,24 +63,74 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void givenEndpointArnWhenPushNotificationThenReturnMessageId(){
+    public void givenDeviceEndpointArnWhenPushNotificationThenReturnMessageId(){
 
         // setup
+        Spot spot = new Spot();
+        spot.setName("Nazare");
+        spot.setId("123");
         String deviceToken = UUID.randomUUID().toString();
         String endpointArn = notificationService.registerDeviceForPushNotification(deviceToken, null);
 
         // execute
-        String messageId = notificationService.pushNotification(Platform.GCM, endpointArn, "unit-subject", "unit-message");
+        String messageId = notificationService.swellNotification(Platform.GCM, endpointArn, spot);
 
         // verify
         assertNotNull(messageId);
     }
 
+    @Test
+    public void givenDeviceEndpointWhenPushNotificationThenMessageIdNotNull(){
 
+        //setup
+        String deviceToken = "12345";
+        String deviceEndpointArn = notificationService.registerDeviceForPushNotification(deviceToken, null);
+        Spot spot = createSpot();
+
+        //execute
+        String messageId = notificationService.swellNotification(Platform.GCM, deviceEndpointArn, spot);
+
+        // verify
+        assertNotNull(messageId);
+
+        // cleanup
+        notificationService.deletePlatformEndpoint(deviceEndpointArn);
+    }
 
     @Test
-    public void test(){
-        String messageId = notificationService.pushNotification(Platform.GCM,"arn:aws:sns:eu-central-1:980738030415:endpoint/GCM/LetMeGoAndroid/217f658e-e141-3d63-8209-35d76abb5fba", "unit-subject", "unit-message");
+    public void givenTopicEndpointWithSubscriberWhenPushNotificationThenMessageIdNotNull(){
+
+        // setup
+        String deviceToken = "12345";
+        String deviceEndpointArn = notificationService.registerDeviceForPushNotification(deviceToken, null);
+        String topicArn = notificationService.createTopic("test_topic");
+        notificationService.subscribeToTopic(topicArn, deviceEndpointArn);
+        Spot spot = createSpot();
+        spot.setTopicArn(topicArn);
+
+        // execute
+        String messageId = notificationService.swellNotification(Platform.GCM, topicArn, spot);
+
+        // verify
+        assertNotNull(messageId);
+
+        // cleanup
+        notificationService.deletePlatformEndpoint(deviceEndpointArn);
+        notificationService.deleteTopic(topicArn);
+
+    }
+
+    /**
+     * Helper function to create a spot
+     *
+     * @return test spot
+     */
+    private Spot createSpot(){
+
+        Spot spot = new Spot();
+        spot.setName("Eisbach");
+        spot.setId("ace26bea-4e10-4a16-beb7-efc5f28f167a");
+        return spot;
     }
 
     /**

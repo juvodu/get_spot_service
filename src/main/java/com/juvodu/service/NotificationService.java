@@ -133,7 +133,7 @@ public class NotificationService {
 
         DeleteEndpointRequest deReq = new DeleteEndpointRequest()
                 .withEndpointArn(endpointArn);
-        DeleteEndpointResult deRes = snsClient.deleteEndpoint(deReq);
+        snsClient.deleteEndpoint(deReq);
     }
 
     /**
@@ -148,6 +148,18 @@ public class NotificationService {
         CreateTopicRequest createTopicRequest = new CreateTopicRequest(topicName);
         CreateTopicResult createTopicResult = snsClient.createTopic(createTopicRequest);
         return createTopicResult.getTopicArn();
+    }
+
+    /**
+     * Delete a topic
+     *
+     * @param topicArn
+     *           of the topic to be deleted
+     */
+    public void deleteTopic(String topicArn){
+
+        DeleteTopicRequest deleteTopicRequest = new DeleteTopicRequest(topicArn);
+        snsClient.deleteTopic(deleteTopicRequest);
     }
 
     /**
