@@ -23,6 +23,7 @@ provider:
        - "SNS:CreatePlatformEndpoint"
        - "SNS:DeleteEndpoint"
        - "SNS:CreateTopic"
+       - "SNS:DeleteTopic"
        - "SNS:Subscribe"
        - "SNS:Unsubscribe"
      Resource:
