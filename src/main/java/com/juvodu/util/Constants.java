@@ -17,4 +17,5 @@ public class Constants {
 
     /** number of max devices per user which receive push notifications */
     public static final int MAX_USER_DEVICES = 100;
+    public static final String NOTIFICATION_TIME_TO_LIVE = "86400"; // 24 h
 }

@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.juvodu.util.Constants.NOTIFICATION_TIME_TO_LIVE;
+
 /**
  * Service for push notifications via SNS to users
  *
@@ -229,13 +231,12 @@ public class NotificationService {
 
         PublishRequest publishRequest = new PublishRequest();
         publishRequest.setMessageStructure("json");
-
         Map<String, String> messageMap = new HashMap<>();
 
         String message = null;
         switch (platform){
             case GCM:
-                message = getAndroidNotificationBodyForSwellAlert(collapseKey, spot);
+                message = getAndroidNotificationBodyForSwellAlert(collapseKey, spot, NOTIFICATION_TIME_TO_LIVE);
                 break;
             default:
                 throw new IllegalArgumentException("Platform not supported : "
@@ -265,14 +266,17 @@ public class NotificationService {
      *            the collapseKey used for the notification, notifications with the same collapse key are replaced by newer notifications
      * @param spot
      *            the spot the alert relates to
+     * @param timeToLiveInSeconds
+     *              the time until a message is dropped when the target device is offline
      *
      * @return the populated JSON message
      */
-    private String getAndroidNotificationBodyForSwellAlert(String collapseKey, BaseSpot spot) {
+    private String getAndroidNotificationBodyForSwellAlert(String collapseKey, BaseSpot spot, String timeToLiveInSeconds) {
 
         Map<String, Object> androidMessageMap = new HashMap<>();
         if(StringUtils.isNotBlank(collapseKey)) {
             androidMessageMap.put("collapse_key", collapseKey);
+            androidMessageMap.put("time_to_live", timeToLiveInSeconds);
         }
         androidMessageMap.put("data", getDataForSwellAlert(spot));
         return JsonHelper.jsonify(androidMessageMap);
