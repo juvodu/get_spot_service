@@ -7,9 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.juvodu.database.model.Spot;
 import com.juvodu.serverless.response.ApiGatewayResponse;
 import com.juvodu.serverless.response.CrudResponse;
+import com.juvodu.service.NotificationService;
 import com.juvodu.service.SpotService;
 import org.apache.log4j.Logger;
 
+import javax.management.Notification;
 import java.util.Map;
 
 /**
@@ -32,6 +34,7 @@ public class DeleteSpotHandler implements RequestHandler<Map<String, Object>, Ap
 
         int statusCode = 200;
         String message = "Deleted Spot successfully.";
+        NotificationService notificationService = new NotificationService();
 
         try {
 
@@ -43,6 +46,8 @@ public class DeleteSpotHandler implements RequestHandler<Map<String, Object>, Ap
             // delete spot
             SpotService<Spot> spotService = new SpotService(Spot.class);
             Spot spot = spotService.getByHashKey(id);
+            String topicArn = spot.getTopicArn();
+            notificationService.deleteTopic(topicArn);
             spotService.delete(spot);
 
         } catch (Exception e) {
