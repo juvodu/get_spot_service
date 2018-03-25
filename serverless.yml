@@ -26,6 +26,7 @@ provider:
        - "SNS:DeleteTopic"
        - "SNS:Subscribe"
        - "SNS:Unsubscribe"
+       - "SNS:Publish"
      Resource:
        - arn:aws:sns:*:*:*
 

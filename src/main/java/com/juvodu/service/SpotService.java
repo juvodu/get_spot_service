@@ -157,7 +157,7 @@ public class SpotService<T extends BaseSpot> extends GenericPersistenceService<T
      */
     public List<T> findByToBeUpdatedAndContinent(Continent continent){
 
-        long oneDayAgoMilli = (new Date()).getTime() - (24L * 60L * 60L * 1000L);
+        long oneDayAgoMilli = (new Date()).getTime() - (24L * 60L * 60L * 1000L); // 24h
         String filterExpression = "continent = :val1 and cronDate < :val2";
         DynamoDBQueryExpression<T> queryExpression = databaseHelper.createIndexQueryExpression(continent.getCode(),
                 Long.toString(oneDayAgoMilli), Constants.CONTINENT_CRONDATE_INDEX, filterExpression, 1000);

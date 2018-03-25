@@ -67,14 +67,14 @@ public class CronSpotHandler implements RequestHandler<Map<String, Object>, ApiG
                         notificationService.swellAlert(spot);
                     }
 
-                } catch (WWOMClientException e) {
+                    spot.setCronDate(new Date());
+                    spotService.save(spot);
+
+                } catch (Exception e) {
 
                     LOG.info("Error updating spot " + spot.getId());
                     e.printStackTrace();
                 }
-
-                spot.setCronDate(new Date());
-                spotService.save(spot);
             }
         }
 

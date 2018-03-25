@@ -264,7 +264,7 @@ public class SpotServiceTest {
 
         //setup
         Calendar cal2DaysAgo = Calendar.getInstance();
-        cal2DaysAgo.add(Calendar.DATE, -1);
+        cal2DaysAgo.add(Calendar.HOUR, -25);
         Spot spot = createSpot(Continent.EU, france, hossegor);
         spot.setCronDate(cal2DaysAgo.getTime());
         spotService.save(spot);
